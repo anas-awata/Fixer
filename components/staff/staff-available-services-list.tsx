@@ -20,9 +20,10 @@ interface Props {
 }
 
 const StaffAvailableServicesList: React.FC<Props> = ({ navigation }) => {
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["get-staff-available-services"],
     queryFn: () => fetchStaffAvailableServices(),
+    
   });
 
   const [refreshing, setRefreshing] = React.useState(false);
@@ -33,7 +34,7 @@ const StaffAvailableServicesList: React.FC<Props> = ({ navigation }) => {
     setRefreshing(false);
   }, []);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
   }
 

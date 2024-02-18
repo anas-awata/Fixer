@@ -63,11 +63,13 @@ export const fetchStaffAvailableServices = async (): Promise<
   return response.data.results as userServiceResponse[];
 };
 
-export const fetchStaffAssignedServices = async (): Promise<
-  userServiceResponse[]
-> => {
+export const fetchStaffAssignedServices = async (
+  filtered: boolean
+): Promise<userServiceResponse[]> => {
   const response = await fetchApi(
-    "/ticket/staff_assigned_tickets_list/",
+    filtered
+      ? `/ticket/staff_assigned_tickets_list?isfiltered=true`
+      : `/ticket/staff_assigned_tickets_list`,
     "GET"
   );
   return response.data.results as userServiceResponse[];
@@ -97,8 +99,16 @@ export const fetchServiceWorkersById = async (
 };
 
 export const StaffMarkAsPaid = async (id: number): Promise<any> => {
+  const response = await fetchApi(`/ticket/action/mark_as_paid/${id}`, "PATCH");
+  return response.data;
+};
+
+export const StaffMarkAsDone = async (data: {
+  id: number;
+  notes: string;
+}): Promise<any> => {
   const response = await fetchApi(
-    `/ticket/action/mark_as_paid/${id}/`,
+    `/ticket/action/mark_as_closed/${data.id}`,
     "PATCH"
   );
   return response.data;
