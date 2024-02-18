@@ -19,9 +19,9 @@ interface Props {
 }
 
 const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["get-staff-assigned-services"],
-    queryFn: () => fetchStaffAssignedServices(),
+    queryFn: () => fetchStaffAssignedServices(true),
   });
 
   const [refreshing, setRefreshing] = React.useState(false);
@@ -32,7 +32,7 @@ const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
     setRefreshing(false);
   }, []);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
   }
 
@@ -50,7 +50,12 @@ const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
         }}
       >
         <Text
-          style={{ textAlign: "center", paddingVertical: 10, fontSize: 18,color:"#fff" }}
+          style={{
+            textAlign: "center",
+            paddingVertical: 10,
+            fontSize: 18,
+            color: "#fff",
+          }}
         >
           You have {data?.length} Tickets Assigned For You
         </Text>

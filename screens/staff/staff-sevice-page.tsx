@@ -16,6 +16,7 @@ import { assignTicketRequest } from "../../models/service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AssignTicket,
+  StaffMarkAsDone,
   StaffMarkAsPaid,
   fetchServiceWorkersById,
   fetchStaffServicesById,
@@ -37,13 +38,17 @@ const StaffServicePage = ({ route, navigation }: Props) => {
   const { id, serviceId } = route.params;
 
   //get ticket info
-  const { data, status } = useQuery({
+  const { data, status, isLoading } = useQuery({
     queryKey: ["get-staff-service", id],
     queryFn: () => fetchStaffServicesById(id),
   });
 
   //get workers list to assign
-  const { data: workers, status: workersStatus } = useQuery({
+  const {
+    data: workers,
+    status: workersStatus,
+    isLoading: workersIsLoading,
+  } = useQuery({
     queryKey: ["get-service-workers", serviceId],
     queryFn: () => fetchServiceWorkersById(serviceId),
   });
@@ -114,6 +119,37 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     },
   });
 
+  //assign open ticket to workers and set price
+  const {
+    mutate: markAsDone,
+    isPending: isPendingDone,
+    error: isErrorDone,
+  } = useMutation({
+    mutationFn: StaffMarkAsDone,
+    onSuccess: (data) => {
+      console.log(data);
+      reset();
+      navigation.navigate("home");
+      queryClient.invalidateQueries({
+        queryKey: ["get-staff-available-services"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-staff-assigned-services"],
+      });
+      Toast.show({
+        type: "success",
+        text1: "Service Marked As Done successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong please try again later",
+      });
+    },
+  });
+
   const { control, handleSubmit, formState, setError, reset, watch } =
     useForm<assignTicketRequest>();
   const { errors } = formState;
@@ -134,11 +170,21 @@ const StaffServicePage = ({ route, navigation }: Props) => {
       workers: submittedData.workers?.join(","),
     };
     console.log("ticket", ticketData);
-    //@ts-ignore
-    submitForm(ticketData);
+
+    if (data?.status == "Open") {
+      //@ts-ignore
+      submitForm(ticketData);
+    } else if (data?.status == "In Progress") {
+      markAsDone({ id: data.id, notes: submittedData.notes! });
+    }
   };
 
-  if (status === "pending" || workersStatus === "pending") {
+  if (
+    status === "pending" ||
+    workersStatus === "pending" ||
+    isLoading ||
+    workersIsLoading
+  ) {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
   }
 
@@ -226,6 +272,18 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                   >
                     Status : {data.status}
                   </Paragraph>
+                  {data.workers.length > 0 && (
+                    <>
+                      <Paragraph style={{ fontSize: 14, color: "blue" }}>
+                        Workers :
+                      </Paragraph>
+                      {data.workers.map((worker) => (
+                        <Paragraph style={{ fontSize: 14 }}>
+                          {`${worker.full_name} -${worker.department}  `}
+                        </Paragraph>
+                      ))}
+                    </>
+                  )}
                   <Paragraph style={{ fontSize: 14, color: "blue" }}>
                     Order Location
                   </Paragraph>
@@ -291,14 +349,39 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                     />
                   </>
                 )}
-                {data.status == "Open" && (
+                {data.status == "In Progress" && (
+                  <>
+                    <Paragraph style={{ fontSize: 16, color: "blue" }}>
+                      Enter order assignment information
+                    </Paragraph>
+                    {!data.service.is_final_price && (
+                      <TextInputController
+                        control={control}
+                        name="notes"
+                        label="notes"
+                        placeholder="Enter Notes"
+                        rules={{
+                          required: "Notes are required",
+                        }}
+                        defaultValue=""
+                        errors={errors}
+                        style={styles.input}
+                        multiline
+                        numberOfLines={2}
+                      />
+                    )}
+                  </>
+                )}
+                {(data.status == "Open" || data.status == "In Progress") && (
                   <Button
                     mode="contained"
                     onPress={handleSubmit(onSubmit)}
-                    disabled={formState.isSubmitting || isPending}
-                    loading={isPending}
+                    disabled={
+                      formState.isSubmitting || isPending || isPendingDone
+                    }
+                    loading={isPending || isPendingDone}
                   >
-                    Submit
+                    {data.status == "Open" ? "Submit" : "Mark Ticket as Done"}
                   </Button>
                 )}
                 {data.status == "Pending Payment" && (

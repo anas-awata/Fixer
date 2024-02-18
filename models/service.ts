@@ -46,7 +46,17 @@ export interface userServiceResponse {
   client_rating: null | number;
   notes: null | string;
   submission_date: string;
-  workers: number[];
+  workers: {
+    availability: boolean;
+    department: string;
+    email: string;
+    full_name: string;
+    id: number;
+    mobile: string;
+    salary: number;
+    services: number[];
+    user_id: number;
+  }[];
   service: serviceResponse;
   final_price: number;
   client_id: number;
@@ -59,6 +69,7 @@ export interface assignTicketRequest {
   workers: number[];
   final_price?: number;
   id: number;
+  notes?:string
 }
 
 export interface serviceWorker {
