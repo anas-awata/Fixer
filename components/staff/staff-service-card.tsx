@@ -8,13 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { userServiceResponse } from "../../models/service";
-import { Button, Title } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ClientAcceptServicePrice,
-  ClientRejectServicePrice,
-} from "../../services/service";
-import Toast from "react-native-toast-message";
 
 type Props = {
   service: userServiceResponse;
@@ -74,6 +68,9 @@ const StaffServiceCard = ({ service, navigation, worker }: Props) => {
             <Text style={styles.text}>
               {service.submission_date.slice(0, 10)}
             </Text>
+            {service.status == "Rated" && (
+              <Text style={styles.text}>Rating : {service.client_rating}</Text>
+            )}
           </View>
         </View>
       </View>

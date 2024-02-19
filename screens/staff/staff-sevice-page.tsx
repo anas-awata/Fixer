@@ -18,6 +18,7 @@ import {
   AssignTicket,
   StaffMarkAsDone,
   StaffMarkAsPaid,
+  StaffRejectTicket,
   fetchServiceWorkersById,
   fetchStaffServicesById,
 } from "../../services/service";
@@ -109,6 +110,37 @@ const StaffServicePage = ({ route, navigation }: Props) => {
       Toast.show({
         type: "success",
         text1: "Service Marked As Paid successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong please try again later",
+      });
+    },
+  });
+
+  //Reject Ticket
+  const {
+    mutate: markAsRejected,
+    isPending: isPendingReject,
+    error: isErrorReject,
+  } = useMutation({
+    mutationFn: StaffRejectTicket,
+    onSuccess: (data) => {
+      console.log(data);
+      reset();
+      navigation.navigate("myTickets");
+      queryClient.invalidateQueries({
+        queryKey: ["get-staff-available-services"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-staff-assigned-services"],
+      });
+      Toast.show({
+        type: "success",
+        text1: "Service Rejected successfully",
       });
     },
     onError: (error: any) => {
@@ -402,8 +434,21 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         loading={isPending || isPendingDone}
                       >
                         {data.status == "Open"
-                          ? "Submit"
+                          ? "Accept And Submit"
                           : "Mark Ticket as Done"}
+                      </Button>
+                    )}
+                    {data.status == "Open" && (
+                      <Button
+                        mode="contained"
+                        buttonColor="#d10606"
+                        onPress={() => {
+                          markAsRejected(data.id);
+                        }}
+                        disabled={isPendingReject}
+                        loading={isPendingReject}
+                      >
+                        Reject Order
                       </Button>
                     )}
                     {data.status == "Pending Payment" && (
