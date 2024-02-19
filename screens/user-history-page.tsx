@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import { StyleSheet, ActivityIndicator, FlatList, View } from "react-native";
+import { StyleSheet, ActivityIndicator, FlatList, View, ScrollView } from "react-native";
 import { fetchUserServices } from "../services/service";
 import UserServiceCard from "../components/user-service-card";
 
@@ -20,17 +20,13 @@ const UserHistoryPage: React.FC<Props> = ({ route, navigation }) => {
   }
   return (
     <View>
-      <FlatList
-        style={{ paddingVertical: 20 }}
-        data={data}
-        renderItem={({ item }) => (
-          <UserServiceCard service={item} key={item.id} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={1}
-        ListEmptyComponent={null}
-        contentContainerStyle={{ alignItems: "center" }}
-      />
+      <ScrollView showsHorizontalScrollIndicator={false}>
+        <>
+          {data?.map((service) => (
+            <UserServiceCard service={service} key={service.id} />
+          ))}
+        </>
+      </ScrollView>
     </View>
   );
 };

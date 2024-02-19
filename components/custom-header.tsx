@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 interface Props {
-  navigation?: any;
+  navigation: any;
   inProgress: number | null;
 }
 

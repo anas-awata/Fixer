@@ -141,7 +141,8 @@ const ServicePage = ({ route, navigation }: Props) => {
     return null;
   }
 
-  const { title, description, initial_price, picture, type } = data;
+  const { title, description, initial_price, picture, type, is_final_price } =
+    data;
 
   return (
     <View style={styles.container}>
@@ -152,11 +153,20 @@ const ServicePage = ({ route, navigation }: Props) => {
             <Paragraph style={{ fontSize: 14, color: "#fff" }}>
               {description}
             </Paragraph>
-            <Paragraph
-              style={{ fontSize: 16, fontWeight: "600", color: "#fff" }}
-            >
-              Price: ${initial_price}
-            </Paragraph>
+            <View>
+              <Paragraph
+                style={{ fontSize: 16, fontWeight: "600", color: "#fff" }}
+              >
+                Price: ${initial_price}
+              </Paragraph>
+              {!is_final_price && (
+                <Paragraph
+                  style={{ fontSize: 11, fontWeight: "600", color: "orange" }}
+                >
+                  Price may change depending on your request info
+                </Paragraph>
+              )}
+            </View>
           </View>
         </ImageBackground>
       </TouchableWithoutFeedback>

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Landing: React.FC<Props> = ({ navigation }) => {
-  const { data, status } = useQuery({
+  const { data, status,isLoading,isFetching } = useQuery({
     queryKey: ["get-user-services-in-progress"],
     queryFn: () => fetchUserServices(true),
   });
@@ -22,8 +22,9 @@ const Landing: React.FC<Props> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <CustomHeader
           inProgress={data && data.length > 0 ? data.length : null}
+          navigation={navigation}
         />
-        <UserServicesInProgress data={data!} status={status} />
+        <UserServicesInProgress data={data!} status={status} isLoading={isLoading || isFetching} />
         <HomeCategories navigation={navigation} />
         <FeaturedServices navigation={navigation} />
         {/* <Testimonials /> */}

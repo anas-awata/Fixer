@@ -28,6 +28,7 @@ import Toast from "react-native-toast-message";
 import MapView, { Marker } from "react-native-maps";
 import useFormErrorHandling from "../../hooks/use-form-error-handling";
 import SelectWorkers from "../../components/inputs/select-workers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = {
   route: any;
@@ -38,7 +39,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
   const { id, serviceId } = route.params;
 
   //get ticket info
-  const { data, status, isLoading } = useQuery({
+  const { data, status, isLoading, isFetching } = useQuery({
     queryKey: ["get-staff-service", id],
     queryFn: () => fetchStaffServicesById(id),
   });
@@ -63,7 +64,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     onSuccess: (data) => {
       console.log(data);
       reset();
-      navigation.navigate("home");
+      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -88,7 +89,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     },
   });
 
-  //assign open ticket to workers and set price
+  //mark ticket as paid
   const {
     mutate: markAsPaid,
     isPending: isPendingPaid,
@@ -98,7 +99,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     onSuccess: (data) => {
       console.log(data);
       reset();
-      navigation.navigate("home");
+      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -119,7 +120,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     },
   });
 
-  //assign open ticket to workers and set price
+  //mark ticket as done
   const {
     mutate: markAsDone,
     isPending: isPendingDone,
@@ -129,7 +130,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     onSuccess: (data) => {
       console.log(data);
       reset();
-      navigation.navigate("home");
+      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -179,11 +180,24 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     }
   };
 
+  //check if Supervisor
+  const [isSupervisor, setIsSupervisor] = useState(false);
+
+  AsyncStorage.getItem("user")
+    .then((user) => {
+      const parsedUser = JSON.parse(user!);
+      setIsSupervisor(parsedUser?.is_supervisor || false);
+    })
+    .catch((error) => {
+      console.error("Error retrieving user:", error);
+    });
+
   if (
     status === "pending" ||
     workersStatus === "pending" ||
     isLoading ||
-    workersIsLoading
+    workersIsLoading ||
+    isFetching
   ) {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
   }
@@ -195,8 +209,6 @@ const StaffServicePage = ({ route, navigation }: Props) => {
   if (!data || !workers) {
     return null;
   }
-
-  console.log(data);
 
   return (
     <View style={styles.container}>
@@ -250,7 +262,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                 <View
                   style={{
                     width: 320,
-                    height: data.status == "Pending Approval" ? 370 : 200,
+                    height: data.status != "Open" ? 350 : 300,
                   }}
                 >
                   <Paragraph
@@ -272,6 +284,11 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                   >
                     Status : {data.status}
                   </Paragraph>
+                  {data.final_price && isSupervisor && (
+                    <Paragraph style={{ fontSize: 14, color: "blue" }}>
+                      Final Price : ${data.final_price}
+                    </Paragraph>
+                  )}
                   {data.workers.length > 0 && (
                     <>
                       <Paragraph style={{ fontSize: 14, color: "blue" }}>
@@ -317,82 +334,89 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                     <Text>No Location Entered</Text>
                   )}
                 </View>
-                {data.status == "Open" && (
+                {isSupervisor && (
                   <>
-                    <Paragraph style={{ fontSize: 16, color: "blue" }}>
-                      Enter order assignment information
-                    </Paragraph>
-                    {!data.service.is_final_price && (
-                      <TextInputController
-                        control={control}
-                        name="final_price"
-                        label="final price"
-                        placeholder="Enter Final Price"
-                        rules={{
-                          required: "Price is required",
-                        }}
-                        defaultValue=""
-                        errors={errors}
-                        style={styles.input}
-                        keyboardType="number-pad"
-                      />
+                    {data.status == "Open" && (
+                      <>
+                        <Paragraph style={{ fontSize: 16, color: "blue" }}>
+                          Enter order assignment information
+                        </Paragraph>
+                        {!data.service.is_final_price && (
+                          <TextInputController
+                            control={control}
+                            name="final_price"
+                            label="final price"
+                            placeholder="Enter Final Price"
+                            rules={{
+                              required: "Price is required",
+                            }}
+                            defaultValue=""
+                            errors={errors}
+                            style={styles.input}
+                            keyboardType="number-pad"
+                          />
+                        )}
+                        <SelectWorkers
+                          items={workers}
+                          control={control}
+                          name="workers"
+                          label="select workers"
+                          errors={errors}
+                          rules={{
+                            required: "Workers are required",
+                          }}
+                        />
+                      </>
                     )}
-                    <SelectWorkers
-                      items={workers}
-                      control={control}
-                      name="workers"
-                      label="select workers"
-                      errors={errors}
-                      rules={{
-                        required: "Workers are required",
-                      }}
-                    />
-                  </>
-                )}
-                {data.status == "In Progress" && (
-                  <>
-                    <Paragraph style={{ fontSize: 16, color: "blue" }}>
-                      Enter order assignment information
-                    </Paragraph>
-                    {!data.service.is_final_price && (
-                      <TextInputController
-                        control={control}
-                        name="notes"
-                        label="notes"
-                        placeholder="Enter Notes"
-                        rules={{
-                          required: "Notes are required",
-                        }}
-                        defaultValue=""
-                        errors={errors}
-                        style={styles.input}
-                        multiline
-                        numberOfLines={2}
-                      />
+                    {data.status == "In Progress" && (
+                      <>
+                        <Paragraph style={{ fontSize: 16, color: "blue" }}>
+                          Enter order assignment information
+                        </Paragraph>
+                        {!data.service.is_final_price && (
+                          <TextInputController
+                            control={control}
+                            name="notes"
+                            label="notes"
+                            placeholder="Enter Notes"
+                            rules={{
+                              required: "Notes are required",
+                            }}
+                            defaultValue=""
+                            errors={errors}
+                            style={styles.input}
+                            multiline
+                            numberOfLines={2}
+                          />
+                        )}
+                      </>
+                    )}
+                    {(data.status == "Open" ||
+                      data.status == "In Progress") && (
+                      <Button
+                        mode="contained"
+                        onPress={handleSubmit(onSubmit)}
+                        disabled={
+                          formState.isSubmitting || isPending || isPendingDone
+                        }
+                        loading={isPending || isPendingDone}
+                      >
+                        {data.status == "Open"
+                          ? "Submit"
+                          : "Mark Ticket as Done"}
+                      </Button>
+                    )}
+                    {data.status == "Pending Payment" && (
+                      <Button
+                        mode="contained"
+                        onPress={() => markAsPaid(data.id)}
+                        disabled={isPendingPaid}
+                        loading={isPendingPaid}
+                      >
+                        Mark As Paid
+                      </Button>
                     )}
                   </>
-                )}
-                {(data.status == "Open" || data.status == "In Progress") && (
-                  <Button
-                    mode="contained"
-                    onPress={handleSubmit(onSubmit)}
-                    disabled={
-                      formState.isSubmitting || isPending || isPendingDone
-                    }
-                    loading={isPending || isPendingDone}
-                  >
-                    {data.status == "Open" ? "Submit" : "Mark Ticket as Done"}
-                  </Button>
-                )}
-                {data.status == "Pending Payment" && (
-                  <Button
-                    mode="contained"
-                    onPress={() => markAsPaid(data.id)}
-                    disabled={isPendingPaid}
-                    loading={isPendingPaid}
-                  >
-                    Mark As Paid
-                  </Button>
                 )}
               </Card.Content>
             </TouchableWithoutFeedback>

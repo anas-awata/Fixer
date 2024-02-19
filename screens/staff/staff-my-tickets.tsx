@@ -1,8 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
+import StaffMyTicketsList from "../../components/staff/staff-my-tickets-list";
 
-import StaffAvailableServicesList from "../../components/staff/staff-available-services-list";
-import StaffMyTickitsList from "../../components/staff/staff-my-tickits-list";
 
 interface Props {
   navigation: any;
@@ -11,7 +10,7 @@ interface Props {
 const StaffMyTickets: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
-      <StaffMyTickitsList navigation={navigation} />
+      <StaffMyTicketsList navigation={navigation} />
     </View>
   );
 };

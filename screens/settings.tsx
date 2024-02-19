@@ -1,7 +1,11 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Snackbar, Title } from "react-native-paper";
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import {
+  CommonActions,
+  NavigationProp,
+  ParamListBase,
+} from "@react-navigation/native";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,11 +19,13 @@ interface Props {
 const Settings = ({ navigation }: Props) => {
   const [visible, setVisible] = React.useState(false);
   const [isStaff, setIsStaff] = useState(false);
+  const [isSupervisor, setIsSupervisor] = useState(false);
 
   AsyncStorage.getItem("user")
     .then((user) => {
       const parsedUser = JSON.parse(user!);
       setIsStaff(parsedUser?.is_staff || false);
+      setIsSupervisor(parsedUser?.is_supervisor || false);
     })
     .catch((error) => {
       console.error("Error retrieving user:", error);
@@ -34,7 +40,13 @@ const Settings = ({ navigation }: Props) => {
       console.log(data);
       AsyncStorage.removeItem("token");
       AsyncStorage.removeItem("user");
-      navigation.navigate("log-in");
+      AsyncStorage.clear();
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "log-in" }],
+        })
+      );
     },
     onError: (error) => {
       console.log(error);
@@ -71,13 +83,15 @@ const Settings = ({ navigation }: Props) => {
         Something went wrong, please try again later.
       </Snackbar>
       <View style={styles.buttonContainer}>
-        <Button
-          mode="outlined"
-          onPress={handleServiceHistoryPress}
-          style={styles.button}
-        >
-          Services History
-        </Button>
+        {(!isStaff || isSupervisor) && (
+          <Button
+            mode="outlined"
+            onPress={handleServiceHistoryPress}
+            style={styles.button}
+          >
+            Services History
+          </Button>
+        )}
         <Button
           mode="outlined"
           onPress={handleEditProfilePress}
