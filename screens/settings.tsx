@@ -55,7 +55,7 @@ const Settings = ({ navigation }: Props) => {
   });
   const handleEditProfilePress = () => {
     // Navigate to the edit profile screen
-    navigation.navigate("EditProfile");
+    navigation.navigate("Edit-Profile", { name: "Edit Profile" });
   };
 
   const handleLogoutPress = () => {

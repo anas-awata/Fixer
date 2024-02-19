@@ -15,3 +15,15 @@ export interface register {
   confirm_password: string;
   full_name: string;
 }
+
+export interface editProfile {
+  mobile: string;
+  full_name: string;
+  id: number;
+}
+
+export interface resetPassword {
+  old_password: string;
+  new_password1: string;
+  new_password2: string;
+}

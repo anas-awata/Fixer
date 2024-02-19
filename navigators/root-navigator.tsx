@@ -13,6 +13,7 @@ import UserHistoryPage from "../screens/user-history-page";
 import VerifyAccount from "../screens/verify-account";
 import StaffServicePage from "../screens/staff/staff-sevice-page";
 import StaffServiceHistory from "../screens/staff/staff-service-history";
+import EditProfile from "../screens/edit-profile";
 
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +101,14 @@ const RootNavigator = () => {
         })}
         name="staff-history"
         component={StaffServiceHistory}
+      />
+      <Stack.Screen
+        options={({ route }: any) => ({
+          headerShown: true,
+          title: route.params.name,
+        })}
+        name="Edit-Profile"
+        component={EditProfile}
       />
     </Stack.Navigator>
   );
