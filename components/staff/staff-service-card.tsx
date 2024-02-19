@@ -19,9 +19,10 @@ import Toast from "react-native-toast-message";
 type Props = {
   service: userServiceResponse;
   navigation: any;
+  worker?: boolean;
 };
 
-const StaffServiceCard = ({ service, navigation }: Props) => {
+const StaffServiceCard = ({ service, navigation, worker }: Props) => {
   const queryClient = useQueryClient();
 
   return (
@@ -35,32 +36,14 @@ const StaffServiceCard = ({ service, navigation }: Props) => {
       }}
     >
       <View style={styles.container}>
-        <View
-          style={{
-            alignItems: "flex-start",
-            width: "100%",
-            flexDirection: "row",
-            gap: 15,
-          }}
-        >
+        <View style={styles.contentContainer}>
           <Image
             source={{ uri: service.service?.picture }}
-            style={{
-              width: 130,
-              height: 105,
-              resizeMode: "contain",
-              borderRadius: 10,
-            }}
+            style={styles.image}
           />
-          <View
-            style={{
-              gap: -10,
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
-            }}
-          >
-            <Title style={styles.title}>{service.service.title}</Title>
-            <Text style={styles.text}>client : {service.full_name}</Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{service.service.title}</Text>
+            <Text style={styles.text}>Client: {service.full_name}</Text>
             <Text style={styles.text}>
               $
               {service.final_price
@@ -68,21 +51,23 @@ const StaffServiceCard = ({ service, navigation }: Props) => {
                 : service.service.initial_price}
             </Text>
             <Text
-              style={{
-                ...styles.text,
-                color:
-                  service.status == "Open" ||
-                  service.status == "In Progress" ||
-                  service.status == "Rated"
-                    ? "green"
-                    : service.status == "Closed"
-                    ? "gray"
-                    : service.status == "Pending" ||
-                      service.status == "Pending Payment" ||
-                      service.status == "Pending Approval"
-                    ? "orange"
-                    : "red",
-              }}
+              style={[
+                styles.text,
+                {
+                  color:
+                    service.status === "Open" ||
+                    service.status === "In Progress" ||
+                    service.status === "Rated"
+                      ? "green"
+                      : service.status === "Closed"
+                      ? "gray"
+                      : service.status === "Pending" ||
+                        service.status === "Pending Payment" ||
+                        service.status === "Pending Approval"
+                      ? "orange"
+                      : "red",
+                },
+              ]}
             >
               {service.status}
             </Text>
@@ -98,23 +83,45 @@ const StaffServiceCard = ({ service, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ecf0f1",
+    backgroundColor: "#fff",
     paddingHorizontal: 15,
-    paddingVertical: 25,
+    paddingVertical: 15,
     margin: 5,
     borderRadius: 10,
     width: "97%",
     borderWidth: 1,
-    borderColor: "#aaa",
+    borderColor: "#ccc",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+    borderRadius: 10,
+  },
+  textContainer: {
+    marginLeft: 10,
   },
   text: {
-    fontSize: 15,
-    marginTop: 8,
-    width: "100%",
-    textAlign: "left",
-    color: "#222",
+    fontSize: 14,
+    marginTop: 4,
+    color: "#333",
   },
-  title: { fontWeight: "600", color: "#3498db", fontSize: 17 },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#3498db",
+  },
 });
-
 export default StaffServiceCard;

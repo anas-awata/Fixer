@@ -16,10 +16,11 @@ import UserServiceCard from "../user-service-card";
 interface Props {
   status: "error" | "success" | "pending";
   data: userServiceResponse[];
+  isLoading: boolean;
 }
 
-const UserServicesInProgress = ({ data, status }: Props) => {
-  if (status == "pending")
+const UserServicesInProgress = ({ data, status, isLoading }: Props) => {
+  if (status == "pending" || isLoading)
     return (
       <View style={styles.activityIndicatorContainer}>
         <ActivityIndicator size="large" />

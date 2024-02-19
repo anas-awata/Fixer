@@ -10,7 +10,7 @@ import Settings from "../screens/settings";
 import Landing from "../screens/landing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StaffLanding from "../screens/staff/staff-landing";
-import StaffMyTickets from "../screens/staff/staff-my-tickits";
+import StaffMyTickets from "../screens/staff/staff-my-tickets";
 
 type TabParamList = {
   Home: undefined;
@@ -22,11 +22,14 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function BottomNavigator() {
   const [isStaff, setIsStaff] = useState(false);
+  const [isSupervisor, setIsSupervisor] = useState(false);
 
   AsyncStorage.getItem("user")
     .then((user) => {
       const parsedUser = JSON.parse(user!);
+      console.log(parsedUser);
       setIsStaff(parsedUser?.is_staff || false);
+      setIsSupervisor(parsedUser?.is_supervisor || false);
     })
     .catch((error) => {
       console.error("Error retrieving user:", error);
@@ -88,7 +91,7 @@ export default function BottomNavigator() {
           },
         }}
       />
-      {isStaff && (
+      {isStaff && isSupervisor && (
         <Tab.Screen
           name="myTickets"
           component={StaffMyTickets}

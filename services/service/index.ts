@@ -43,6 +43,17 @@ export const ClientAcceptServicePrice = async (data: {
   return response.data;
 };
 
+export const ClientRateService = async (data: {
+  id: number;
+  client_rating: number;
+}): Promise<any> => {
+  const response = await fetchApi(
+    `/ticket/action/client_rate/${data.id}`,
+    "PATCH"
+  );
+  return response.data;
+};
+
 export const ClientRejectServicePrice = async (data: {
   id: number;
 }): Promise<any> => {
@@ -60,6 +71,13 @@ export const fetchStaffAvailableServices = async (): Promise<
     "/ticket/staff_available_tickets_list/",
     "GET"
   );
+  return response.data.results as userServiceResponse[];
+};
+
+export const fetchWorkerAssignedeServices = async (): Promise<
+  userServiceResponse[]
+> => {
+  const response = await fetchApi("/ticket/workers_tickets_list/", "GET");
   return response.data.results as userServiceResponse[];
 };
 

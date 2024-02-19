@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { TouchableOpacity, Text, View, Image, StyleSheet } from "react-native";
 import { userServiceResponse } from "../models/service";
-import { Button, Title } from "react-native-paper";
+import { Button, Divider, Menu, Title } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ClientAcceptServicePrice,
+  ClientRateService,
   ClientRejectServicePrice,
 } from "../services/service";
 import Toast from "react-native-toast-message";
+import StarRatingModal from "./inputs/start-rating-modal";
 
 type Props = {
   service: userServiceResponse;
@@ -15,30 +17,6 @@ type Props = {
 
 const UserServiceCard = ({ service }: Props) => {
   const queryClient = useQueryClient();
-  const {
-    mutate: Acceptservice,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: ClientAcceptServicePrice,
-    onSuccess: (data) => {
-      console.log(data);
-      queryClient.invalidateQueries({
-        queryKey: ["get-user-services-in-progress"],
-      });
-      Toast.show({
-        type: "success",
-        text1: "Service Accepted successfully",
-      });
-    },
-    onError: (error: any) => {
-      console.log("error", error);
-      Toast.show({
-        type: "error",
-        text1: "Something went wrong please try again later",
-      });
-    },
-  });
 
   const {
     mutate: rejectService,
@@ -65,71 +43,97 @@ const UserServiceCard = ({ service }: Props) => {
     },
   });
 
+  const {
+    mutate: Acceptservice,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: ClientAcceptServicePrice,
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["get-user-services-in-progress"],
+      });
+      Toast.show({
+        type: "success",
+        text1: "Service Accepted successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.log("error", error);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong please try again later",
+      });
+    },
+  });
+
+  const {
+    mutate: RateService,
+    isPending: isPendingRating,
+    error: isErrorRating,
+  } = useMutation({
+    mutationFn: ClientRateService,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-user-services-in-progress"],
+      });
+      Toast.show({
+        type: "success",
+        text1: "Service Rated successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.log("error", error);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong please try again later",
+      });
+    },
+  });
+
   const onPressAccept = async () => {
     Acceptservice({ id: service.id });
   };
   const onPressReject = async () => {
     rejectService({ id: service.id });
   };
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleRate = (selectedRating: any) => {
+    RateService({ id: service.id, client_rating: selectedRating });
+  };
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          alignItems: "flex-start",
-          width: "100%",
-          flexDirection: "row",
-          gap: 15,
-        }}
-      >
+      <View style={styles.contentContainer}>
         <Image
           source={{ uri: service.service?.picture }}
-          style={{
-            width: 130,
-            height: 105,
-            resizeMode: "contain",
-            borderRadius: 10,
-          }}
+          style={styles.image}
         />
-        <View
-          style={{
-            gap: -10,
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-          }}
-        >
-          <Title style={styles.title}>{service.service.title}</Title>
-          <Text style={styles.text}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{service.service.title}</Text>
+          <Text style={styles.price}>
             $
             {service.final_price
               ? service.final_price
               : service.service.initial_price}
           </Text>
           <Text
-            style={{
-              ...styles.text,
-              color:
-                service.status == "Open" ||
-                service.status == "In Progress" ||
-                service.status == "Rated"
-                  ? "green"
-                  : service.status == "Closed"
-                  ? "gray"
-                  : service.status == "Pending" ||
-                    service.status == "Pending Payment" ||
-                    service.status == "Pending Approval"
-                  ? "orange"
-                  : "red",
-            }}
+            style={[styles.status, { color: getStatusColor(service.status) }]}
           >
             {service.status}
           </Text>
-          <Text style={styles.text}>
+          <Text style={styles.date}>
             {service.submission_date.slice(0, 10)}
           </Text>
+          {service.status == "Rated" && (
+            <Text style={styles.date}>Rating :{service.client_rating}</Text>
+          )}
         </View>
       </View>
-      {service.status == "Pending" && (
-        <View style={{ display: "flex", flexDirection: "row", gap: 3 }}>
+      {service.status === "Pending Approval" && (
+        <View style={styles.buttonContainer}>
           <Button
             textColor="green"
             onPress={onPressAccept}
@@ -148,29 +152,110 @@ const UserServiceCard = ({ service }: Props) => {
           </Button>
         </View>
       )}
+      {service.status == "Closed" && (
+        <>
+          <View style={styles.buttonRatingContainer}>
+            <Button
+              mode="contained"
+              buttonColor="green"
+              textColor="#fff"
+              onPress={() => setModalVisible(true)}
+              // disabled={isPending}
+              // loading={isPending}
+            >
+              Rate The Service
+            </Button>
+          </View>
+          <StarRatingModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onRate={handleRate}
+          />
+        </>
+      )}
     </View>
   );
 };
 
+const getStatusColor = (status: userServiceResponse["status"]) => {
+  switch (status) {
+    case "Open":
+    case "In Progress":
+    case "Rated":
+      return "green";
+    case "Closed":
+      return "gray";
+    case "Pending":
+    case "Pending Payment":
+    case "Pending Approval":
+      return "orange";
+    default:
+      return "red";
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ecf0f1",
+    backgroundColor: "#fff",
     paddingHorizontal: 15,
-    paddingVertical: 25,
-    margin: 5,
-    borderRadius: 10,
-    width: 330,
+    paddingVertical: 20,
+    margin: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#aaa",
+    borderColor: "#ddd",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+    justifyContent:"center"
   },
-  text: {
-    fontSize: 15,
-    marginTop: 8,
-    width: "100%",
-    textAlign: "left",
-    color: "#222",
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  title: { fontWeight: "600", color: "#3498db", fontSize: 17 },
+  image: {
+    width: 110,
+    height: 100,
+    resizeMode: "cover",
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 3,
+  },
+  price: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 3,
+  },
+  status: {
+    fontSize: 14,
+    marginBottom: 3,
+  },
+  date: {
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 3,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  buttonRatingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
 });
-
 export default UserServiceCard;

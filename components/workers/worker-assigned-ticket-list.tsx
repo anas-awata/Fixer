@@ -7,21 +7,18 @@ import {
   View,
   RefreshControl,
 } from "react-native";
-import {
-  fetchStaffAssignedServices,
-  fetchStaffAvailableServices,
-} from "../../services/service";
+import { fetchWorkerAssignedeServices } from "../../services/service";
 import { Text, Title } from "react-native-paper";
-import StaffServiceCard from "./staff-service-card";
+import StaffServiceCard from "../staff/staff-service-card";
 
 interface Props {
   navigation: any;
 }
 
-const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
+const WorkerAssignedTicketList: React.FC<Props> = ({ navigation }) => {
   const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["get-staff-assigned-services"],
-    queryFn: () => fetchStaffAssignedServices(true),
+    queryKey: ["get-worker-assigned-services"],
+    queryFn: () => fetchWorkerAssignedeServices(),
   });
 
   const [refreshing, setRefreshing] = React.useState(false);
@@ -57,7 +54,7 @@ const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
             color: "#fff",
           }}
         >
-          You have {data?.length} Tickets Assigned For You
+          There are {data?.length} Tickets Assigned For You
         </Text>
       </View>
       <FlatList
@@ -68,6 +65,7 @@ const StaffMyTickitsList: React.FC<Props> = ({ navigation }) => {
             service={item}
             key={item.id}
             navigation={navigation}
+            worker={true}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -89,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StaffMyTickitsList;
+export default WorkerAssignedTicketList;
