@@ -121,6 +121,14 @@ export const StaffMarkAsPaid = async (id: number): Promise<any> => {
   return response.data;
 };
 
+export const StaffRejectTicket = async (id: number): Promise<any> => {
+  const response = await fetchApi(
+    `/ticket/action/staff_reject_ticket/${id}`,
+    "PATCH"
+  );
+  return response.data;
+};
+
 export const StaffMarkAsDone = async (data: {
   id: number;
   notes: string;
