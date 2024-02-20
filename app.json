@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Fixer",
-    "slug": "Fixer",
+    "slug": "fixer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.Fixer.app",
+      "googleServicesFile": "./google-services.json"
     },
+    "plugins": [
+      "@react-native-firebase/app"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "22516e60-0360-424b-9c7d-6d4709157cf4"
+      }
+    },
+    "owner": "anasawata0"
   }
 }

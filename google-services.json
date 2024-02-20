@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "909022428434",
+    "project_id": "fixer-8",
+    "storage_bucket": "fixer-8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:909022428434:android:a53a0f6200ec30d01647cb",
+        "android_client_info": {
+          "package_name": "com.Fixer.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw84sxBrsycrnO77jKCnjZ8y9p07iO1j4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

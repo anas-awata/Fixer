@@ -17,6 +17,7 @@ export default function App() {
       secondary: "yellow",
     },
   };
+  
   return (
     <>
       <NavigationContainer>
