@@ -24,8 +24,11 @@
     "expo": "~49.0.15",
     "expo-asset": "~8.10.1",
     "expo-constants": "~14.4.2",
+    "expo-dev-client": "~2.4.13",
+    "expo-device": "^5.9.3",
     "expo-image-picker": "~14.3.2",
     "expo-location": "~16.1.0",
+    "expo-notifications": "~0.20.1",
     "expo-sqlite": "~11.3.3",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
@@ -40,8 +43,7 @@
     "react-native-select-dropdown": "^3.4.0",
     "react-native-toast-message": "^2.2.0",
     "react-native-vector-icons": "^10.0.3",
-    "react-native-web": "~0.19.6",
-    "expo-dev-client": "~2.4.13"
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
