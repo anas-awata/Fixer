@@ -22,6 +22,8 @@ export default function App() {
   const { expoPushToken } = usePushNotifications();
   console.log("expotoke", expoPushToken);
 
+  //eas build --profile production --platform android
+
   return (
     <>
       <NavigationContainer>
