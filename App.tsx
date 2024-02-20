@@ -6,6 +6,8 @@ import {
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
+import { usePushNotifications } from "./hooks/usePushNotifications";
+import NotificationHandler from "./hooks/notification-handler";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -17,7 +19,9 @@ export default function App() {
       secondary: "yellow",
     },
   };
-  
+  const { expoPushToken } = usePushNotifications();
+  console.log("expotoke", expoPushToken);
+
   return (
     <>
       <NavigationContainer>
