@@ -33,7 +33,11 @@ const UserHistoryPage: React.FC<Props> = ({ route, navigation }) => {
         <ScrollView showsHorizontalScrollIndicator={false}>
           <>
             {data?.map((service) => (
-              <UserServiceCard service={service} key={service.id} />
+              <UserServiceCard
+                service={service}
+                key={service.id}
+                navigation={navigation}
+              />
             ))}
           </>
         </ScrollView>

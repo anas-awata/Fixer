@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import NotificationHandler from "./hooks/notification-handler";
+import { Text } from "react-native";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -20,7 +21,7 @@ export default function App() {
     },
   };
   const { expoPushToken } = usePushNotifications();
-  console.log("expotoke", expoPushToken);
+  console.log("expotoke", expoPushToken?.data);
 
   //eas build --profile production --platform android
 

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Text, View, Image, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import { userServiceResponse } from "../models/service";
 import { Button, Divider, Menu, Title } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,9 +20,10 @@ import StarRatingModal from "./inputs/start-rating-modal";
 
 type Props = {
   service: userServiceResponse;
+  navigation: any;
 };
 
-const UserServiceCard = ({ service }: Props) => {
+const UserServiceCard = ({ service, navigation }: Props) => {
   const queryClient = useQueryClient();
 
   const {
@@ -28,6 +36,9 @@ const UserServiceCard = ({ service }: Props) => {
       console.log(data);
       queryClient.invalidateQueries({
         queryKey: ["get-user-services-in-progress"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-user-services"],
       });
       Toast.show({
         type: "success",
@@ -54,6 +65,9 @@ const UserServiceCard = ({ service }: Props) => {
       queryClient.invalidateQueries({
         queryKey: ["get-user-services-in-progress"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["get-user-services"],
+      });
       Toast.show({
         type: "success",
         text1: "Service Accepted successfully",
@@ -77,6 +91,9 @@ const UserServiceCard = ({ service }: Props) => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["get-user-services-in-progress"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-user-services"],
       });
       Toast.show({
         type: "success",
@@ -105,34 +122,42 @@ const UserServiceCard = ({ service }: Props) => {
     RateService({ id: service.id, client_rating: selectedRating });
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        <Image
-          source={{ uri: service.service?.picture }}
-          style={styles.image}
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{service.service.title}</Text>
-          <Text style={styles.price}>
-            $
-            {service.final_price
-              ? service.final_price
-              : service.service.initial_price}
-          </Text>
-          <Text
-            style={[styles.status, { color: getStatusColor(service.status) }]}
-          >
-            {service.status}
-          </Text>
-          <Text style={styles.date}>
-            {service.submission_date.slice(0, 10)}
-          </Text>
-          {service.status == "Rated" && (
-            <Text style={styles.date}>Rating :{service.client_rating}</Text>
-          )}
+    <Pressable
+      onPress={() => {
+        navigation.navigate("User-Service", {
+          id: service.id,
+          name: service.service.title,
+        });
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <Image
+            source={{ uri: service.service?.picture }}
+            style={styles.image}
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{service.service.title}</Text>
+            <Text style={styles.price}>
+              $
+              {service.final_price
+                ? service.final_price
+                : service.service.initial_price}
+            </Text>
+            <Text
+              style={[styles.status, { color: getStatusColor(service.status) }]}
+            >
+              {service.status}
+            </Text>
+            <Text style={styles.date}>
+              {service.submission_date.slice(0, 10)}
+            </Text>
+            {service.status == "Rated" && (
+              <Text style={styles.date}>Rating :{service.client_rating}</Text>
+            )}
+          </View>
         </View>
-      </View>
-      {service.status === "Pending Approval" && (
+        {/* {service.status === "Pending Approval" && (
         <View style={styles.buttonContainer}>
           <Button
             textColor="green"
@@ -151,8 +176,8 @@ const UserServiceCard = ({ service }: Props) => {
             Reject
           </Button>
         </View>
-      )}
-      {service.status == "Closed" && (
+      )} */}
+        {/* {service.status == "Closed" && (
         <>
           <View style={styles.buttonRatingContainer}>
             <Button
@@ -172,8 +197,9 @@ const UserServiceCard = ({ service }: Props) => {
             onRate={handleRate}
           />
         </>
-      )}
-    </View>
+      )} */}
+      </View>
+    </Pressable>
   );
 };
 
@@ -211,7 +237,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
-    justifyContent:"center"
+    justifyContent: "center",
   },
   contentContainer: {
     flexDirection: "row",

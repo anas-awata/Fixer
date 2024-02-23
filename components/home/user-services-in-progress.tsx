@@ -17,9 +17,15 @@ interface Props {
   status: "error" | "success" | "pending";
   data: userServiceResponse[];
   isLoading: boolean;
+  navigation: any;
 }
 
-const UserServicesInProgress = ({ data, status, isLoading }: Props) => {
+const UserServicesInProgress = ({
+  data,
+  status,
+  isLoading,
+  navigation,
+}: Props) => {
   if (status == "pending" || isLoading)
     return (
       <View style={styles.activityIndicatorContainer}>
@@ -36,7 +42,11 @@ const UserServicesInProgress = ({ data, status, isLoading }: Props) => {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <>
           {data?.map((service) => (
-            <UserServiceCard service={service} key={service.id} />
+            <UserServiceCard
+              service={service}
+              key={service.id}
+              navigation={navigation}
+            />
           ))}
         </>
       </ScrollView>

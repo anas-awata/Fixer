@@ -24,6 +24,7 @@ export interface serviceRequest {
 export interface userServiceResponse {
   id: number;
   description: string;
+  paycode: string;
   location: {
     latitude: number;
     longitude: number;
@@ -69,7 +70,7 @@ export interface assignTicketRequest {
   workers: number[];
   final_price?: number;
   id: number;
-  notes?:string
+  notes?: string;
 }
 
 export interface serviceWorker {
