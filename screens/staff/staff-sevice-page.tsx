@@ -10,26 +10,23 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import { Button, Card, Title, Paragraph } from "react-native-paper";
 import { assignTicketRequest } from "../../models/service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
-  AssignTicket,
-  StaffMarkAsDone,
-  StaffMarkAsPaid,
-  StaffRejectTicket,
   fetchServiceWorkersById,
   fetchStaffServicesById,
 } from "../../services/service";
 import TextInputController from "../../components/inputs/text-input-controller";
 import { useForm } from "react-hook-form";
 import useReverseGeocoding from "../../hooks/use-reverce-geocoding";
-import Toast from "react-native-toast-message";
 import MapView, { Marker } from "react-native-maps";
-import useFormErrorHandling from "../../hooks/use-form-error-handling";
 import SelectWorkers from "../../components/inputs/select-workers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import QrCodeScannerModal from "../../components/inputs/qr-code-scanner-modal";
+import useStaffTicketMutations from "../../hooks/use-staff-ticket-mutations";
 
 type Props = {
   route: any;
@@ -40,10 +37,18 @@ const StaffServicePage = ({ route, navigation }: Props) => {
   const { id, serviceId } = route.params;
 
   //get ticket info
-  const { data, status, isLoading, isFetching } = useQuery({
+  const { data, status, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["get-staff-service", id],
     queryFn: () => fetchStaffServicesById(id),
   });
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, []);
 
   //get workers list to assign
   const {
@@ -54,135 +59,17 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     queryKey: ["get-service-workers", serviceId],
     queryFn: () => fetchServiceWorkersById(serviceId),
   });
-  const queryClient = useQueryClient();
-  //assign open ticket to workers and set price
   const {
-    mutate: submitForm,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: AssignTicket,
-    onSuccess: (data) => {
-      console.log(data);
-      reset();
-      navigation.navigate("myTickets");
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-available-services"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-assigned-services"],
-      });
-      Toast.show({
-        type: "success",
-        text1: "Service Assigned successfully",
-      });
-    },
-    onError: (error: any) => {
-      console.log(error);
-      if (error.response && error.response.status === 400) {
-        useFormErrorHandling(error, setError);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Something went wrong please try again later",
-        });
-      }
-    },
-  });
-
-  //mark ticket as paid
-  const {
-    mutate: markAsPaid,
-    isPending: isPendingPaid,
-    error: isErrorPAid,
-  } = useMutation({
-    mutationFn: StaffMarkAsPaid,
-    onSuccess: (data) => {
-      console.log(data);
-      reset();
-      navigation.navigate("myTickets");
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-available-services"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-assigned-services"],
-      });
-      Toast.show({
-        type: "success",
-        text1: "Service Marked As Paid successfully",
-      });
-    },
-    onError: (error: any) => {
-      console.log(error);
-      Toast.show({
-        type: "error",
-        text1: "Something went wrong please try again later",
-      });
-    },
-  });
-
-  //Reject Ticket
-  const {
-    mutate: markAsRejected,
-    isPending: isPendingReject,
-    error: isErrorReject,
-  } = useMutation({
-    mutationFn: StaffRejectTicket,
-    onSuccess: (data) => {
-      console.log(data);
-      reset();
-      navigation.navigate("myTickets");
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-available-services"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-assigned-services"],
-      });
-      Toast.show({
-        type: "success",
-        text1: "Service Rejected successfully",
-      });
-    },
-    onError: (error: any) => {
-      console.log(error);
-      Toast.show({
-        type: "error",
-        text1: "Something went wrong please try again later",
-      });
-    },
-  });
-
-  //mark ticket as done
-  const {
-    mutate: markAsDone,
-    isPending: isPendingDone,
-    error: isErrorDone,
-  } = useMutation({
-    mutationFn: StaffMarkAsDone,
-    onSuccess: (data) => {
-      console.log(data);
-      reset();
-      navigation.navigate("myTickets");
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-available-services"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["get-staff-assigned-services"],
-      });
-      Toast.show({
-        type: "success",
-        text1: "Service Marked As Done successfully",
-      });
-    },
-    onError: (error: any) => {
-      console.log(error);
-      Toast.show({
-        type: "error",
-        text1: "Something went wrong please try again later",
-      });
-    },
-  });
-
+    assignTicket,
+    isAssignTicketPending,
+    assignTicketError,
+    rejectTicket,
+    isRejectTicketPending,
+    rejectTicketError,
+    markAsDone,
+    isMarkAsDonePending,
+    markAsDoneError,
+  } = useStaffTicketMutations(navigation);
   const { control, handleSubmit, formState, setError, reset, watch } =
     useForm<assignTicketRequest>();
   const { errors } = formState;
@@ -206,7 +93,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
 
     if (data?.status == "Open") {
       //@ts-ignore
-      submitForm(ticketData);
+      assignTicket(ticketData);
     } else if (data?.status == "In Progress") {
       markAsDone({ id: data.id, notes: submittedData.notes! });
     }
@@ -223,6 +110,8 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     .catch((error) => {
       console.error("Error retrieving user:", error);
     });
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   if (
     status === "pending" ||
@@ -244,51 +133,54 @@ const StaffServicePage = ({ route, navigation }: Props) => {
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <ImageBackground
-          source={{ uri: data.service.picture }}
-          style={styles.header}
-        >
-          <ScrollView style={styles.headerContent}>
-            <Title style={styles.title}>{data.service.title} Order</Title>
-            <Paragraph style={styles.text}>order id : {data.id}</Paragraph>
-            <Paragraph style={styles.text}>
-              client description : {data.description}
-            </Paragraph>
-            <Paragraph style={styles.text}>Client: {data.full_name}</Paragraph>
-            <Paragraph style={styles.text}>
-              phone number: {data.mobile}
-            </Paragraph>
-            {data.service.type == "Fixing" && (
-              <Paragraph style={styles.text}>
-                Device Type {data.info_fields?.device_type}
-              </Paragraph>
-            )}
-            {data.service.type == "Setting" && (
-              <Paragraph style={styles.text}>
-                Company size : {data.info_fields?.company_size}
-              </Paragraph>
-            )}
-            <Paragraph style={styles.text}>
-              initial Price: ${data.service.initial_price}
-            </Paragraph>
-          </ScrollView>
-        </ImageBackground>
-      </TouchableWithoutFeedback>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }} // Ensure the KeyboardAvoidingView fills the entire screen
-        behavior={Platform.OS === "ios" ? "padding" : undefined} // Adjust behavior based on platform
+      <ScrollView
+        style={{ height: "100%" }} // Set the height to fill the parent container
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        nestedScrollEnabled={true}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <Card style={styles.card}>
-          <ScrollView
-            style={{ height: "100%" }} // Set the height to fill the parent container
-            contentContainerStyle={{
-              paddingVertical: 20,
-              paddingHorizontal: 10,
-              flexGrow: 1,
-            }}
-            nestedScrollEnabled={true}
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ImageBackground
+            source={{ uri: data.service.picture }}
+            style={styles.header}
           >
+            <ScrollView style={styles.headerContent}>
+              <Title style={styles.title}>{data.service.title} Order</Title>
+              <Paragraph style={styles.text}>order id : {data.id}</Paragraph>
+              <Paragraph style={styles.text}>
+                client description : {data.description}
+              </Paragraph>
+              <Paragraph style={styles.text}>
+                Client: {data.full_name}
+              </Paragraph>
+              <Paragraph style={styles.text}>
+                phone number: {data.mobile}
+              </Paragraph>
+              {data.service.type == "Fixing" && (
+                <Paragraph style={styles.text}>
+                  Device Type {data.info_fields?.device_type}
+                </Paragraph>
+              )}
+              {data.service.type == "Setting" && (
+                <Paragraph style={styles.text}>
+                  Company size : {data.info_fields?.company_size}
+                </Paragraph>
+              )}
+              <Paragraph style={styles.text}>
+                initial Price: ${data.service.initial_price}
+              </Paragraph>
+            </ScrollView>
+          </ImageBackground>
+        </TouchableWithoutFeedback>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }} // Ensure the KeyboardAvoidingView fills the entire screen
+          behavior={Platform.OS === "ios" ? "padding" : undefined} // Adjust behavior based on platform
+        >
+          <Card style={styles.card}>
             <TouchableWithoutFeedback onPress={dismissKeyboard}>
               <Card.Content style={{ display: "flex", gap: 10 }}>
                 <View
@@ -429,9 +321,11 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         mode="contained"
                         onPress={handleSubmit(onSubmit)}
                         disabled={
-                          formState.isSubmitting || isPending || isPendingDone
+                          formState.isSubmitting ||
+                          isAssignTicketPending ||
+                          isMarkAsDonePending
                         }
-                        loading={isPending || isPendingDone}
+                        loading={isAssignTicketPending || isMarkAsDonePending}
                       >
                         {data.status == "Open"
                           ? "Accept And Submit"
@@ -443,10 +337,10 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         mode="contained"
                         buttonColor="#d10606"
                         onPress={() => {
-                          markAsRejected(data.id);
+                          rejectTicket(data.id);
                         }}
-                        disabled={isPendingReject}
-                        loading={isPendingReject}
+                        disabled={isRejectTicketPending}
+                        loading={isRejectTicketPending}
                       >
                         Reject Order
                       </Button>
@@ -454,20 +348,27 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                     {data.status == "Pending Payment" && (
                       <Button
                         mode="contained"
-                        onPress={() => markAsPaid(data.id)}
-                        disabled={isPendingPaid}
-                        loading={isPendingPaid}
+                        // onPress={() => markAsPaid(data.id)}
+                        onPress={() => {
+                          setModalVisible(true);
+                        }}
                       >
-                        Mark As Paid
+                        Scann Payment Qr Code
                       </Button>
                     )}
                   </>
                 )}
+                <QrCodeScannerModal
+                  visible={modalVisible}
+                  onClose={() => setModalVisible(false)}
+                  id={data.id}
+                  navigation={navigation}
+                />
               </Card.Content>
             </TouchableWithoutFeedback>
-          </ScrollView>
-        </Card>
-      </KeyboardAvoidingView>
+          </Card>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </View>
   );
 };
@@ -494,9 +395,9 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   card: {
-    margin: 10,
     flex: 1,
     backgroundColor: "#fff",
+    padding: 20,
   },
   activityIndicator: {
     flex: 1,

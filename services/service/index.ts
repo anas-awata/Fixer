@@ -21,6 +21,13 @@ export const fetchUserServices = async (
   return response.data.results as userServiceResponse[];
 };
 
+export const fetchUserServiceById = async (
+  id: number
+): Promise<userServiceResponse> => {
+  const response = await fetchApi(`/ticket/client_view/${id}`, "GET");
+  return response.data as userServiceResponse;
+};
+
 export const fetchServicesById = async (
   id: number
 ): Promise<serviceResponse> => {
@@ -116,8 +123,15 @@ export const fetchServiceWorkersById = async (
   return response.data.results as serviceWorker[];
 };
 
-export const StaffMarkAsPaid = async (id: number): Promise<any> => {
-  const response = await fetchApi(`/ticket/action/mark_as_paid/${id}`, "PATCH");
+export const StaffMarkAsPaid = async (data: {
+  id: number;
+  paycode: string;
+}): Promise<any> => {
+  const response = await fetchApi(
+    `/ticket/action/mark_as_paid/${data.id}`,
+    "PATCH",
+    data
+  );
   return response.data;
 };
 

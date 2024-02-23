@@ -14,6 +14,7 @@ import VerifyAccount from "../screens/verify-account";
 import StaffServicePage from "../screens/staff/staff-sevice-page";
 import StaffServiceHistory from "../screens/staff/staff-service-history";
 import EditProfile from "../screens/edit-profile";
+import UserServicePage from "../screens/user-service-page";
 
 const Stack = createNativeStackNavigator();
 
@@ -109,6 +110,14 @@ const RootNavigator = () => {
         })}
         name="Edit-Profile"
         component={EditProfile}
+      />
+      <Stack.Screen
+        options={({ route }: any) => ({
+          headerShown: true,
+          title: route.params.name,
+        })}
+        name="User-Service"
+        component={UserServicePage}
       />
     </Stack.Navigator>
   );

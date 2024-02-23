@@ -23,7 +23,7 @@ const StarRatingModal = ({ visible, onClose, onRate }: Props) => {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
@@ -49,7 +49,7 @@ const StarRatingModal = ({ visible, onClose, onRate }: Props) => {
             title="SUbmit Rating"
             onPress={() => {
               onRate(rating);
-              onClose()
+              onClose();
             }}
           />
         </View>

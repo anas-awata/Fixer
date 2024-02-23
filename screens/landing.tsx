@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, StyleSheet, ScrollView, Button } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Button,
+  RefreshControl,
+} from "react-native";
 import CustomHeader from "../components/custom-header";
 import Testimonials from "../components/home/testimonials";
 import FeaturedServices from "../components/home/featured-services";
@@ -13,18 +19,36 @@ interface Props {
 }
 
 const Landing: React.FC<Props> = ({ navigation }) => {
-  const { data, status,isLoading,isFetching } = useQuery({
+  const { data, status, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["get-user-services-in-progress"],
     queryFn: () => fetchUserServices(true),
   });
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, []);
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <CustomHeader
           inProgress={data && data.length > 0 ? data.length : null}
           navigation={navigation}
         />
-        <UserServicesInProgress data={data!} status={status} isLoading={isLoading || isFetching} />
+        <UserServicesInProgress
+          data={data!}
+          status={status}
+          isLoading={isLoading || isFetching}
+          navigation={navigation}
+        />
         <HomeCategories navigation={navigation} />
         <FeaturedServices navigation={navigation} />
         {/* <Testimonials /> */}
