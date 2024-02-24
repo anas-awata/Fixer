@@ -4,7 +4,6 @@ import WelcomeScreen from "../screens/welcome-screen";
 import LogIn from "../screens/log-in";
 import Register from "../screens/register";
 import Home from "../screens/home";
-import AddNewTicket from "../screens/add-new-ticket";
 import CustomHeader from "../components/custom-header";
 import ServiceCategoryPage from "../screens/service-category-page";
 import ServicePage from "../screens/service-page";
@@ -49,11 +48,6 @@ const RootNavigator = () => {
         options={{
           headerShown: false,
         }}
-      />
-      <Stack.Screen
-        options={{ headerShown: true }}
-        name="add-ticket"
-        component={AddNewTicket}
       />
       <Stack.Screen
         options={({ route }: any) => ({

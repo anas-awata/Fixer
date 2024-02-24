@@ -23,7 +23,7 @@ import TextInputController from "../components/inputs/text-input-controller";
 import { useForm } from "react-hook-form";
 import useReverseGeocoding from "../hooks/use-reverce-geocoding";
 import Toast from "react-native-toast-message";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import useFormErrorHandling from "../hooks/use-form-error-handling";
 import SelectWorkers from "../components/inputs/select-workers";
 
@@ -174,6 +174,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         latitudeDelta: 0.008,
                         longitudeDelta: 0.008,
                       }}
+                      provider={PROVIDER_GOOGLE}
                     >
                       <Marker
                         coordinate={{

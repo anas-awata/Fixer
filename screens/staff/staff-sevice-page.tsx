@@ -22,7 +22,7 @@ import {
 import TextInputController from "../../components/inputs/text-input-controller";
 import { useForm } from "react-hook-form";
 import useReverseGeocoding from "../../hooks/use-reverce-geocoding";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import SelectWorkers from "../../components/inputs/select-workers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import QrCodeScannerModal from "../../components/inputs/qr-code-scanner-modal";
@@ -244,6 +244,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         latitudeDelta: 0.008,
                         longitudeDelta: 0.008,
                       }}
+                      provider={PROVIDER_GOOGLE}
                     >
                       <Marker
                         coordinate={{
