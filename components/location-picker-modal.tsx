@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Modal, Button } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 
 interface LocationPickerModalProps {
@@ -73,6 +73,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          provider={PROVIDER_GOOGLE}
         >
           {selectedLocation && <Marker coordinate={selectedLocation} />}
         </MapView>

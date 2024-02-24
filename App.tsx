@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import NotificationHandler from "./hooks/notification-handler";
 import { Text } from "react-native";
+import { firebase } from "@react-native-firebase/messaging";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -25,11 +26,25 @@ export default function App() {
 
   //eas build --profile production --platform android
 
+  // const getFcmToken = async () => {
+  //   const def = firebase.messaging();
+  //   try {
+  //     const token = await def.getToken();
+  //     console.log("fcm");
+  //     console.log("fcm token", token);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // getFcmToken();
+
   return (
     <>
       <NavigationContainer>
         <QueryClientProvider client={queryClient}>
           <PaperProvider theme={theme}>
+            <Text>{expoPushToken?.data}</Text>
             <RootNavigator />
             <Toast />
           </PaperProvider>
