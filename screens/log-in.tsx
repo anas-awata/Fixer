@@ -10,6 +10,7 @@ import { fetchApi } from "../api/api";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 
 interface Props {
   navigation: NavigationProp<ParamListBase>;
@@ -23,6 +24,15 @@ const LogIn = ({ navigation }: Props) => {
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
+
+  const [deviceToken, setDeviceToken] = useState("");
+  AsyncStorage.getItem("deviceToken")
+    .then((token) => {
+      setDeviceToken(JSON.parse(token!));
+    })
+    .catch((error) => {
+      console.error("Error retrieving user:", error);
+    });
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: login,
@@ -58,8 +68,9 @@ const LogIn = ({ navigation }: Props) => {
   });
 
   const onSubmit = async (data: logIn) => {
+    console.log("deviceToken", deviceToken);
     try {
-      await mutate(data);
+      await mutate({ ...data, device_reg_id: deviceToken });
     } catch (error: any) {
       console.log(error);
     }

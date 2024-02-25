@@ -3,6 +3,7 @@ import RootNavigator from "./navigators/root-navigator";
 import {
   PaperProvider,
   MD3LightTheme as DefaultTheme,
+  TextInput,
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
@@ -38,13 +39,21 @@ export default function App() {
   // };
 
   // getFcmToken();
+    // {
+      //   "icon": "./local/assets/notification-icon.png",
+      //   "color": "#ffffff",
+      //   "sounds": [
+      //     "./local/assets/notification-sound.wav",
+      //     "./local/assets/notification-sound-other.wav"
+      //   ]
+      // }
 
   return (
     <>
       <NavigationContainer>
         <QueryClientProvider client={queryClient}>
           <PaperProvider theme={theme}>
-            <Text>{expoPushToken?.data}</Text>
+            <TextInput value={expoPushToken?.data} />
             <RootNavigator />
             <Toast />
           </PaperProvider>
