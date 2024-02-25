@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { login } from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
+import Toast from "react-native-toast-message";
 
 interface Props {
   navigation: NavigationProp<ParamListBase>;
@@ -68,7 +69,15 @@ const LogIn = ({ navigation }: Props) => {
   });
 
   const onSubmit = async (data: logIn) => {
-    console.log("deviceToken", deviceToken);
+    if (!deviceToken) {
+      console.error("Device token is null");
+      Toast.show({
+        type: "error",
+        text1: "Error logging in ,Please Try agin later",
+      });
+      return; // Exit early if deviceToken is null
+    }
+
     try {
       await mutate({ ...data, device_reg_id: deviceToken });
     } catch (error: any) {

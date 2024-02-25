@@ -4,18 +4,18 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, BottomNavigation } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { CommonActions } from "@react-navigation/native";
-import WelcomeScreen from "../screens/welcome-screen";
-import TicketList from "../screens/ticket-list";
 import Settings from "../screens/settings";
 import Landing from "../screens/landing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StaffLanding from "../screens/staff/staff-landing";
 import StaffMyTickets from "../screens/staff/staff-my-tickets";
+import Notifications from "../screens/notifications";
 
 type TabParamList = {
   Home: undefined;
   settings: undefined;
   myTickets: undefined;
+  notifications: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -105,6 +105,16 @@ export default function BottomNavigator() {
           }}
         />
       )}
+      <Tab.Screen
+        name="notifications"
+        component={Notifications}
+        options={{
+          tabBarLabel: "Notifications",
+          tabBarIcon: ({ color, size }: any) => {
+            return <Icon name="bell" size={size} color={"blue"} />;
+          },
+        }}
+      />
       <Tab.Screen
         name="settings"
         component={Settings}

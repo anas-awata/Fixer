@@ -56,8 +56,6 @@ export const usePushNotifications = (): PushNotificationState => {
       alert("Failed to get push token for push notification");
       return;
     }
-
-    console.log("constants", Constants.easConfig?.projectId);
     token = await getDevicePushTokenAsync();
 
     if (Platform.OS === "android") {
@@ -75,10 +73,7 @@ export const usePushNotifications = (): PushNotificationState => {
     registerForPushNotificationsAsync()
       .then((token) => {
         if (token) {
-          console.log("Token received:", token);
           setExpoPushToken(token);
-          AsyncStorage.setItem("deviceToken", JSON.stringify(token.data));
-          console.log("mytoken", token);
         } else {
           console.log("Failed to get token");
         }
