@@ -1,6 +1,7 @@
 export interface logIn {
   email: string;
   password: string;
+  device_reg_id: string;
 }
 
 export interface Activate {

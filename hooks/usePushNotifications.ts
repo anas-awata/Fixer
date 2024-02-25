@@ -2,36 +2,39 @@ import { useState, useEffect, useRef } from "react";
 import {
   setNotificationHandler,
   addNotificationReceivedListener,
-  ExpoPushToken,
   setNotificationChannelAsync,
   Notification,
-  getExpoPushTokenAsync,
   getPermissionsAsync,
   requestPermissionsAsync,
   AndroidImportance,
   addNotificationResponseReceivedListener,
   removeNotificationSubscription,
   Subscription,
+  getDevicePushTokenAsync,
+  DevicePushToken,
+  scheduleNotificationAsync,
 } from "expo-notifications";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface PushNotificationState {
-  expoPushToken?: ExpoPushToken;
+  expoPushToken?: DevicePushToken;
   notification?: Notification;
 }
 
 export const usePushNotifications = (): PushNotificationState => {
   setNotificationHandler({
     handleNotification: async () => ({
-      shouldPlaySound: false,
+      shouldPlaySound: true,
       shouldShowAlert: true,
       shouldSetBadge: false,
     }),
   });
 
   const [expoPushToken, setExpoPushToken] = useState<
-    ExpoPushToken | undefined
+    DevicePushToken | undefined
   >();
 
   const [notification, setNotification] = useState<Notification | undefined>();
@@ -55,9 +58,7 @@ export const usePushNotifications = (): PushNotificationState => {
     }
 
     console.log("constants", Constants.easConfig?.projectId);
-    token = await getExpoPushTokenAsync({
-      projectId: Constants.easConfig?.projectId,
-    });
+    token = await getDevicePushTokenAsync();
 
     if (Platform.OS === "android") {
       setNotificationChannelAsync("default", {
@@ -76,6 +77,7 @@ export const usePushNotifications = (): PushNotificationState => {
         if (token) {
           console.log("Token received:", token);
           setExpoPushToken(token);
+          AsyncStorage.setItem("deviceToken", JSON.stringify(token.data));
           console.log("mytoken", token);
         } else {
           console.log("Failed to get token");
@@ -88,12 +90,17 @@ export const usePushNotifications = (): PushNotificationState => {
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
         setNotification(notification);
+        console.log("mynotification", notification);
+        Toast.show({
+          type: "success",
+          text1: notification.request.content.title!,
+        });
       }
     );
 
     responseListener.current = addNotificationResponseReceivedListener(
       (response) => {
-        console.log(response);
+        console.log("my action", response);
       }
     );
 

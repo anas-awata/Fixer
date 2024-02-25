@@ -23,7 +23,9 @@
       "package": "com.Fixer.app",
       "googleServicesFile": "./google-services.json"
     },
-    "plugins": ["@react-native-firebase/app"],
+    "plugins": [
+      "@react-native-firebase/app"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     },
