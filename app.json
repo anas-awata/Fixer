@@ -7,15 +7,16 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": { "apikey": "${GOOGLE_MAPS_API_KEY}" }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -23,9 +24,7 @@
       "package": "com.Fixer.app",
       "googleServicesFile": "./google-services.json"
     },
-    "plugins": [
-      "@react-native-firebase/app"
-    ],
+    "plugins": ["@react-native-firebase/app"],
     "web": {
       "favicon": "./assets/favicon.png"
     },

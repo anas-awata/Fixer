@@ -11,6 +11,7 @@ import { usePushNotifications } from "./hooks/usePushNotifications";
 import NotificationHandler from "./hooks/notification-handler";
 import { Text } from "react-native";
 import { firebase } from "@react-native-firebase/messaging";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ export default function App() {
   const { expoPushToken } = usePushNotifications();
   console.log("expotoke", expoPushToken?.data);
 
+  AsyncStorage.setItem("deviceToken", JSON.stringify(expoPushToken?.data));
   //eas build --profile production --platform android
 
   // const getFcmToken = async () => {
@@ -39,21 +41,21 @@ export default function App() {
   // };
 
   // getFcmToken();
-    // {
-      //   "icon": "./local/assets/notification-icon.png",
-      //   "color": "#ffffff",
-      //   "sounds": [
-      //     "./local/assets/notification-sound.wav",
-      //     "./local/assets/notification-sound-other.wav"
-      //   ]
-      // }
+  // {
+  //   "icon": "./local/assets/notification-icon.png",
+  //   "color": "#ffffff",
+  //   "sounds": [
+  //     "./local/assets/notification-sound.wav",
+  //     "./local/assets/notification-sound-other.wav"
+  //   ]
+  // }
 
   return (
     <>
       <NavigationContainer>
         <QueryClientProvider client={queryClient}>
           <PaperProvider theme={theme}>
-            <TextInput value={expoPushToken?.data} />
+            {/* <TextInput value={expoPushToken?.data} /> */}
             <RootNavigator />
             <Toast />
           </PaperProvider>
