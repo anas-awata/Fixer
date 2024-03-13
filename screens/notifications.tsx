@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
+  View,
 } from "react-native";
-import { List, Text } from "react-native-paper";
-import { useQuery } from "@tanstack/react-query";
-import { fetchNotifications } from "../services/notifications";
+import { List, Switch, Text } from "react-native-paper";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  MarkNotificationAsRead,
+  fetchNotifications,
+  fetchUnseenNotifications,
+} from "../services/notifications";
 import { notificationResponse } from "../models/notifications";
-import { getBadgeCountAsync } from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Notification = {
   id: number;
@@ -17,7 +22,8 @@ type Notification = {
   message: string;
 };
 
-const Notifications = () => {
+const Notifications = ({ navigation }: any) => {
+  const [showAll, setshowAll] = useState(false);
   const {
     data: notifications,
     isLoading,
@@ -25,9 +31,11 @@ const Notifications = () => {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => fetchNotifications(),
+    queryKey: [`notifications`, showAll],
+    queryFn: () => (showAll ? fetchNotifications() : fetchNotifications()),
   });
+
+  console.log("notifications", notifications);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -36,6 +44,31 @@ const Notifications = () => {
     await refetch();
     setRefreshing(false);
   }, []);
+
+  const [isStaff, setIsStaff] = useState(false);
+  const [isSupervisor, setIsSupervisor] = useState(false);
+
+  AsyncStorage.getItem("user")
+    .then((user) => {
+      const parsedUser = JSON.parse(user!);
+      setIsStaff(parsedUser?.is_staff || false);
+      setIsSupervisor(parsedUser?.is_supervisor || false);
+    })
+    .catch((error) => {
+      console.error("Error retrieving user:", error);
+    });
+
+  const queryClient = useQueryClient();
+
+  const MarkAsRead = useMutation({
+    mutationFn: MarkNotificationAsRead,
+    onSuccess: (data) => {
+      refetch();
+    },
+    onError: (error: any) => {
+      console.log(error);
+    },
+  });
 
   if (isLoading || isFetching) {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
@@ -50,6 +83,15 @@ const Notifications = () => {
   }
   return (
     <>
+      <View style={{ flexDirection: "row", padding: 20 }}>
+        <Text>Show All</Text>
+        <Switch
+          value={showAll}
+          onValueChange={() => {
+            setshowAll(!showAll);
+          }}
+        />
+      </View>
       <FlatList
         data={notifications!}
         refreshControl={
@@ -77,6 +119,25 @@ const Notifications = () => {
             right={() => (
               <Text style={styles.date}>{item.date.slice(0, 10)}</Text>
             )}
+            onPress={() => {
+              MarkAsRead.mutate({ id: item.id });
+              if (isStaff) {
+                if (item.type == 1) {
+                  navigation.navigate("Home");
+                } else {
+                  navigation.navigate("staff-service", {
+                    name: item.ticket.service.title,
+                    id: item.ticket.id,
+                    serviceId: item.ticket.service.id,
+                  });
+                }
+              } else {
+                navigation.navigate("User-Service", {
+                  name: item.ticket.service.title,
+                  id: item.ticket.id,
+                });
+              }
+            }}
           />
         )}
       />

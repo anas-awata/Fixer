@@ -10,6 +10,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import StaffLanding from "../screens/staff/staff-landing";
 import StaffMyTickets from "../screens/staff/staff-my-tickets";
 import Notifications from "../screens/notifications";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { fetchNotificationsNumber } from "../services/notifications";
 
 type TabParamList = {
   Home: undefined;
@@ -17,6 +19,10 @@ type TabParamList = {
   myTickets: undefined;
   notifications: undefined;
 };
+
+interface NotificationsCountResponse {
+  unseen_count: number;
+}
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -34,6 +40,17 @@ export default function BottomNavigator() {
     .catch((error) => {
       console.error("Error retrieving user:", error);
     });
+
+  const {
+    data: notificationsCount,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  }: UseQueryResult<NotificationsCountResponse> = useQuery({
+    queryKey: ["notificationsCount"],
+    queryFn: fetchNotificationsNumber,
+  });
   return (
     <Tab.Navigator
       screenOptions={{
@@ -110,6 +127,7 @@ export default function BottomNavigator() {
         component={Notifications}
         options={{
           tabBarLabel: "Notifications",
+          tabBarBadge: notificationsCount?.unseen_count || 0,
           tabBarIcon: ({ color, size }: any) => {
             return <Icon name="bell" size={size} color={"blue"} />;
           },

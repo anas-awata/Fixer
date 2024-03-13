@@ -37,10 +37,9 @@ const Settings = ({ navigation }: Props) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: logout,
     onSuccess: (data) => {
-      console.log(data);
+
       AsyncStorage.removeItem("token");
       AsyncStorage.removeItem("user");
-      AsyncStorage.clear();
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

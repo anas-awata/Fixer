@@ -45,7 +45,6 @@ const EditProfile = ({ navigation }: Props) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: postEditProfile,
     onSuccess: async (data) => {
-      console.log(data);
       reset({ full_name: data.full_name, mobile: data.mobile });
       Toast.show({
         type: "success",

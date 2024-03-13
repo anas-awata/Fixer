@@ -32,7 +32,7 @@ const WelcomeScreen = ({ navigation }: Props) => {
       <View style={styles.contentContainer}>
         <Image
           style={styles.logo}
-          source={require("../assets/fixer_logo.png")}
+          source={require("../assets/adaptive-icon.png")}
         />
         <Text style={styles.title}>Fixer</Text>
         <Text style={styles.title2}>Fix Anything Anywhere</Text>

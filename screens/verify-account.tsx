@@ -36,7 +36,6 @@ const VerifyAccount = ({ navigation, route }: Props) => {
       is_staff: boolean;
       username: string;
     }) => {
-      console.log(data);
       Toast.show({
         type: "success",
         text1: "Account Verified Successfully",

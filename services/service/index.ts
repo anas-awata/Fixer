@@ -6,8 +6,13 @@ import {
   userServiceResponse,
 } from "../../models/service";
 
-export const fetchServices = async (): Promise<serviceResponse[]> => {
-  const response = await fetchApi("/ticket/service/list", "GET");
+export const fetchServices = async (
+  byrate: boolean
+): Promise<serviceResponse[]> => {
+  const response = await fetchApi(
+    byrate ? "/ticket/service/listbyrate" : "/ticket/service/list",
+    "GET"
+  );
   return response.data.results as serviceResponse[];
 };
 

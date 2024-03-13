@@ -22,7 +22,6 @@ const ResetPasswordModal = ({ visible, onClose }: Props) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: postChangePassword,
     onSuccess: (data) => {
-      console.log(data);
       reset();
       Toast.show({
         type: "success",

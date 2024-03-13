@@ -21,7 +21,6 @@ const HomeCategories = (props: Props) => {
     queryFn: () => fetchServiceCategories(),
   });
 
-  console.log(data);
   return (
     <>
       <View

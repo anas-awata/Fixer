@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { fetchServices } from "../../services/service";
 import { serviceResponse } from "../../models/service";
+import { Button } from "react-native-paper";
+import HomeServiceCard from "../home-service-card";
 
 interface Props {
   navigation: any;
@@ -18,39 +20,37 @@ interface Props {
 
 const FeaturedServices = ({ navigation }: Props) => {
   const { data, status } = useQuery({
-    queryKey: ["get-services"],
-    queryFn: () => fetchServices(),
+    queryKey: ["get-top-services"],
+    queryFn: () => fetchServices(true),
   });
 
-  const handleServicePress = (service: any) => {
-    console.log(`Pressed: ${service.title}`);
-    navigation.navigate("service", {
-      id: service.id,
-      name: service.title,
-    });
-  };
-
   const renderFeaturedService = (service: serviceResponse) => (
-    <TouchableOpacity
-      key={service.id}
-      onPress={() => handleServicePress(service)}
-      style={styles.featuredServiceCard}
-    >
-      <Image
-        source={{ uri: service.picture }}
-        style={styles.featuredServiceImage}
-      />
-      <Text style={styles.featuredServiceTitle}>{service.title}</Text>
-      <Text style={styles.featuredServiceDescription}>
-        {service.description.slice(0, 40)}
-        {service.description.length > 40 ? "..." : ""}
-      </Text>
-    </TouchableOpacity>
+    <HomeServiceCard service={service} navigation={navigation} />
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Top Services</Text>
+      <View
+        style={{
+          marginTop: 20,
+          marginBottom: 10,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: 10 }}>
+          Top Services
+        </Text>
+        <Button
+          mode="text"
+          onPress={() => {
+            navigation.navigate("Services");
+          }}
+        >
+          <Text>Show All</Text>
+        </Button>
+      </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {status != "pending" && <>{data?.map(renderFeaturedService)}</>}
         {status == "pending" && (

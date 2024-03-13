@@ -15,7 +15,7 @@ import { Button, Card, Title, Paragraph } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { fetchUserServiceById } from "../services/service";
-import StarRatingModal from "../components/inputs/start-rating-modal";
+import StarRatingModal from "../components/inputs/star-rating-modal";
 import useReverseGeocoding from "../hooks/use-reverce-geocoding";
 import QrCodeGeneratorModal from "../components/qr-code-generator-modal";
 import useUserTicketMutations from "../hooks/use-user-ticket-mutations";

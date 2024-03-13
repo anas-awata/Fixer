@@ -24,7 +24,6 @@ const QrCodeScannerModal = ({ visible, onClose, id, navigation }: Props) => {
   } = useMutation({
     mutationFn: StaffMarkAsPaid,
     onSuccess: (data) => {
-      console.log(data);
       navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],

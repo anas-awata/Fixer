@@ -8,6 +8,7 @@ export interface serviceResponse {
   type: "Fixing" | "Setting" | "Support";
   service: serviceResponse;
   is_final_price: boolean;
+  average_rating: number | null;
 }
 
 export interface serviceRequest {

@@ -61,7 +61,6 @@ const ServicePage = ({ route, navigation }: Props) => {
       is_staff: boolean;
       username: string;
     }) => {
-      console.log(data);
 
       reset();
       navigation.navigate("home");

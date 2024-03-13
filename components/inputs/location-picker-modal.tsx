@@ -26,8 +26,6 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           console.log("Permission to access location was denied");
           return;
         }
-
-        console.log("Getting user location");
         const location = await Location.getCurrentPositionAsync({});
         setSelectedLocation({
           latitude: location.coords.latitude,
@@ -37,7 +35,6 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-        console.log(location);
       } catch (error) {
         console.error("Error fetching user location:", error);
         // If fetching user location fails, set the location to the city center of Damascus, Syria

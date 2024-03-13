@@ -15,7 +15,6 @@ const useUserTicketMutations = () => {
   const rejectServiceMutation = useMutation({
     mutationFn: ClientRejectServicePrice,
     onSuccess: (data) => {
-      console.log(data);
       invalidateQueries();
       Toast.show({
         type: "success",
@@ -32,7 +31,6 @@ const useUserTicketMutations = () => {
   const acceptServiceMutation = useMutation({
     mutationFn: ClientAcceptServicePrice,
     onSuccess: (data) => {
-      console.log(data);
       invalidateQueries();
       Toast.show({
         type: "success",

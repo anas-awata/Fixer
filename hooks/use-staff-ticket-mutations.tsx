@@ -17,7 +17,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const assignTicketMutation = useMutation({
     mutationFn: AssignTicket,
     onSuccess: (data) => {
-      console.log(data);
       navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
@@ -47,7 +46,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const rejectTicketMutation = useMutation({
     mutationFn: StaffRejectTicket,
     onSuccess: (data) => {
-      console.log(data);
       navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
@@ -73,7 +71,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const markAsDoneMutation = useMutation({
     mutationFn: StaffMarkAsDone,
     onSuccess: (data) => {
-      console.log(data);
       navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],

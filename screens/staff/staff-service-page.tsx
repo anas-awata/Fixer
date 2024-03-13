@@ -219,7 +219,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                         Workers :
                       </Paragraph>
                       {data.workers.map((worker) => (
-                        <Paragraph style={{ fontSize: 14 }}>
+                        <Paragraph style={{ fontSize: 14 }} key={worker.id}>
                           {`${worker.full_name} -${worker.department}  `}
                         </Paragraph>
                       ))}

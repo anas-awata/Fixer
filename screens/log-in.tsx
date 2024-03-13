@@ -44,7 +44,6 @@ const LogIn = ({ navigation }: Props) => {
       is_staff: boolean;
       username: string;
     }) => {
-      console.log(data);
       AsyncStorage.setItem("token", data?.token);
       AsyncStorage.setItem("user", JSON.stringify({ ...data }));
       reset();
@@ -90,7 +89,7 @@ const LogIn = ({ navigation }: Props) => {
       <View style={styles.container}>
         <Image
           style={styles.logo}
-          source={require("../assets/fixer_logo.png")}
+          source={require("../assets/adaptive-icon.png")}
         />
 
         <TextInputController

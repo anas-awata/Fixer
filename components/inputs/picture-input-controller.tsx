@@ -48,7 +48,7 @@ const PictureInputController: React.FC<PictureInputControllerProps> = ({
     // Update the form state with the selected images
     setValue(name, [...currentPictures, ...pickerResult.assets]);
 
-    console.log("Updated Form State:", getValues(name));
+  
   };
 
   return (

@@ -21,7 +21,6 @@ const useReverseGeocoding = (
           const data = await response.json();
 
           if (data.display_name) {
-            console.log(data);
             setLocationName(data.display_name);
           }
         } catch (error) {

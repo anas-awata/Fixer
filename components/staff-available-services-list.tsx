@@ -13,7 +13,7 @@ import {
 } from "../services/service";
 import UserServiceCard from "../components/user-service-card";
 import { Text, Title } from "react-native-paper";
-import StaffServiceCard from "./staff-service-card";
+import StaffServiceCard from "./staff/staff-service-card";
 
 interface Props {
   navigation: any;
@@ -37,7 +37,7 @@ const StaffAvailableServicesList: React.FC<Props> = ({ navigation }) => {
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;
   }
 
-  console.log(data);
+
 
   return (
     <View style={{ flex: 1 }}>

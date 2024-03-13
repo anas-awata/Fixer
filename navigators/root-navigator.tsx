@@ -10,10 +10,11 @@ import ServicePage from "../screens/service-page";
 import Categories from "../screens/categories";
 import UserHistoryPage from "../screens/user-history-page";
 import VerifyAccount from "../screens/verify-account";
-import StaffServicePage from "../screens/staff/staff-sevice-page";
+import StaffServicePage from "../screens/staff/staff-service-page";
 import StaffServiceHistory from "../screens/staff/staff-service-history";
 import EditProfile from "../screens/edit-profile";
 import UserServicePage from "../screens/user-service-page";
+import Services from "../screens/services";
 
 const Stack = createNativeStackNavigator();
 
@@ -112,6 +113,13 @@ const RootNavigator = () => {
         })}
         name="User-Service"
         component={UserServicePage}
+      />
+      <Stack.Screen
+        options={({ route }: any) => ({
+          headerShown: true,
+        })}
+        name="Services"
+        component={Services}
       />
     </Stack.Navigator>
   );

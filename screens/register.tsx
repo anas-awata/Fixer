@@ -33,7 +33,6 @@ const Register = ({ navigation }: Props) => {
       is_staff: boolean;
       username: string;
     }) => {
-      console.log(data);
       // AsyncStorage.setItem("token", data?.token);
       // AsyncStorage.setItem("user", JSON.stringify({ ...data }));
       reset();

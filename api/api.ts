@@ -13,7 +13,6 @@ export const fetchApi = async (
   formData?: boolean
 ) => {
   const token = await AsyncStorage.getItem("token"); // Retrieve token from AsyncStorage
-  console.log(token);
 
   try {
     const headers = {

@@ -16,7 +16,7 @@ import {
   ClientRejectServicePrice,
 } from "../services/service";
 import Toast from "react-native-toast-message";
-import StarRatingModal from "./inputs/start-rating-modal";
+import StarRatingModal from "./inputs/star-rating-modal";
 
 type Props = {
   service: userServiceResponse;
@@ -33,7 +33,6 @@ const UserServiceCard = ({ service, navigation }: Props) => {
   } = useMutation({
     mutationFn: ClientRejectServicePrice,
     onSuccess: (data) => {
-      console.log(data);
       queryClient.invalidateQueries({
         queryKey: ["get-user-services-in-progress"],
       });
@@ -61,7 +60,6 @@ const UserServiceCard = ({ service, navigation }: Props) => {
   } = useMutation({
     mutationFn: ClientAcceptServicePrice,
     onSuccess: (data) => {
-      console.log(data);
       queryClient.invalidateQueries({
         queryKey: ["get-user-services-in-progress"],
       });
