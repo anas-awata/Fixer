@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
+import { setNotificationHandler } from "expo-notifications";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -19,32 +21,22 @@ export default function App() {
       secondary: "yellow",
     },
   };
-  const { expoPushToken } = usePushNotifications();
+  const { expoPushToken, notification } = usePushNotifications();
   // console.log("expotoke", expoPushToken?.data);
 
   AsyncStorage.setItem("deviceToken", JSON.stringify(expoPushToken?.data));
   //eas build --profile production --platform android
 
-  // const getFcmToken = async () => {
-  //   const def = firebase.messaging();
-  //   try {
-  //     const token = await def.getToken();
-  //     console.log("fcm");
-  //     console.log("fcm token", token);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // getFcmToken();
-  // {
-  //   "icon": "./local/assets/notification-icon.png",
-  //   "color": "#ffffff",
-  //   "sounds": [
-  //     "./local/assets/notification-sound.wav",
-  //     "./local/assets/notification-sound-other.wav"
-  //   ]
-  // }
+  useEffect(() => {
+    console.log("notification", notification);
+    setNotificationHandler({
+      handleNotification: async () => ({
+        shouldPlaySound: true,
+        shouldShowAlert: true,
+        shouldSetBadge: true,
+      }),
+    });
+  }, [notification]);
 
   return (
     <>

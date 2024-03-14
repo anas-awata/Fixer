@@ -68,14 +68,14 @@ const LogIn = ({ navigation }: Props) => {
   });
 
   const onSubmit = async (data: logIn) => {
-    if (!deviceToken) {
-      console.error("Device token is null");
-      Toast.show({
-        type: "error",
-        text1: "Error logging in ,Please Try agin later",
-      });
-      return; // Exit early if deviceToken is null
-    }
+    // if (!deviceToken) {
+    //   console.error("Device token is null");
+    //   Toast.show({
+    //     type: "error",
+    //     text1: "Error logging in ,Please Try agin later",
+    //   });
+    //   return;
+    // }
 
     try {
       await mutate({ ...data, device_reg_id: deviceToken });

@@ -12,7 +12,6 @@ import {
   Subscription,
   getDevicePushTokenAsync,
   DevicePushToken,
-  scheduleNotificationAsync,
 } from "expo-notifications";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
@@ -23,14 +22,6 @@ export interface PushNotificationState {
   expoPushToken?: DevicePushToken;
   notification?: Notification;
 }
-
-setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldShowAlert: true,
-    shouldSetBadge: false,
-  }),
-});
 
 export const usePushNotifications = (): PushNotificationState => {
   const [expoPushToken, setExpoPushToken] = useState<
@@ -81,15 +72,10 @@ export const usePushNotifications = (): PushNotificationState => {
       .catch((error) => {
         console.error("Error getting token:", error);
       });
-
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
         setNotification(notification);
         console.log("mynotification", notification);
-        Toast.show({
-          type: "success",
-          text1: notification.request.content.title!,
-        });
       }
     );
 

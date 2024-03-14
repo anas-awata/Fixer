@@ -33,6 +33,7 @@ const Notifications = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(async () => {
+    queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
