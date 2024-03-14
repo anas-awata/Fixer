@@ -27,6 +27,8 @@ const StaffServiceCard = ({ service, navigation, worker }: Props) => {
           name: service.service.title,
           serviceId: service.service.id,
         });
+        queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
       }}
     >
       <View style={styles.container}>

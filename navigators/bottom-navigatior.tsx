@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, BottomNavigation, Badge } from "react-native-paper";
+import {
+  Text,
+  BottomNavigation,
+  Badge,
+  ActivityIndicator,
+} from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { CommonActions } from "@react-navigation/native";
 import Settings from "../screens/settings";
@@ -136,10 +141,16 @@ export default function BottomNavigator() {
             return (
               <View style={{ position: "relative" }}>
                 <Icon name="bell" size={size} color={"blue"} />
-                {notificationsCount > 0 && (
+                {notificationsCount > 0 && !isLoading && !isFetching && (
                   <Badge style={{ position: "absolute", top: -5, left: 20 }}>
                     {notificationsCount}
                   </Badge>
+                )}
+                {(isLoading || isFetching) && (
+                  <ActivityIndicator
+                    style={{ position: "absolute", top: -5, left: 20 }}
+                    size={10}
+                  />
                 )}
               </View>
             );

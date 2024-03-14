@@ -27,10 +27,11 @@ import SelectWorkers from "../../components/inputs/select-workers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import QrCodeScannerModal from "../../components/inputs/qr-code-scanner-modal";
 import useStaffTicketMutations from "../../hooks/use-staff-ticket-mutations";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 type Props = {
   route: any;
-  navigation: any;
+  navigation: NavigationProp<ParamListBase>;
 };
 
 const StaffServicePage = ({ route, navigation }: Props) => {
@@ -69,7 +70,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     markAsDone,
     isMarkAsDonePending,
     markAsDoneError,
-  } = useStaffTicketMutations(navigation);
+  } = useStaffTicketMutations({ navigation: navigation });
   const { control, handleSubmit, formState, setError, reset, watch } =
     useForm<assignTicketRequest>();
   const { errors } = formState;

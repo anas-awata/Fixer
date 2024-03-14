@@ -7,8 +7,13 @@ import {
 } from "../services/service";
 import useFormErrorHandling from "./use-form-error-handling";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
-const useStaffTicketMutations = ({ navigation }: any) => {
+const useStaffTicketMutations = ({
+  navigation,
+}: {
+  navigation: NavigationProp<ParamListBase>;
+}) => {
   const queryClient = useQueryClient();
 
   const [error, setError] = useState(null);
@@ -17,7 +22,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const assignTicketMutation = useMutation({
     mutationFn: AssignTicket,
     onSuccess: (data) => {
-      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -28,9 +32,10 @@ const useStaffTicketMutations = ({ navigation }: any) => {
         type: "success",
         text1: "Service Assigned successfully",
       });
+      navigation.navigate("myTickets");
     },
     onError: (error: any) => {
-      console.log(error);
+      console.log("staff", error);
       if (error.response && error.response.status === 400) {
         useFormErrorHandling(error, setError);
       } else {
@@ -46,7 +51,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const rejectTicketMutation = useMutation({
     mutationFn: StaffRejectTicket,
     onSuccess: (data) => {
-      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -57,9 +61,10 @@ const useStaffTicketMutations = ({ navigation }: any) => {
         type: "success",
         text1: "Service Rejected successfully",
       });
+      navigation.navigate("myTickets");
     },
     onError: (error) => {
-      console.log(error);
+      console.log("staff", error);
       Toast.show({
         type: "error",
         text1: "Something went wrong please try again later",
@@ -71,7 +76,6 @@ const useStaffTicketMutations = ({ navigation }: any) => {
   const markAsDoneMutation = useMutation({
     mutationFn: StaffMarkAsDone,
     onSuccess: (data) => {
-      navigation.navigate("myTickets");
       queryClient.invalidateQueries({
         queryKey: ["get-staff-available-services"],
       });
@@ -82,9 +86,10 @@ const useStaffTicketMutations = ({ navigation }: any) => {
         type: "success",
         text1: "Service Marked As Done successfully",
       });
+      navigation.navigate("myTickets");
     },
     onError: (error) => {
-      console.log(error);
+      console.log("staff", error);
       Toast.show({
         type: "error",
         text1: "Something went wrong please try again later",

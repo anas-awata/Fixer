@@ -126,6 +126,8 @@ const UserServiceCard = ({ service, navigation }: Props) => {
           id: service.id,
           name: service.service.title,
         });
+        queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
       }}
     >
       <View style={styles.container}>

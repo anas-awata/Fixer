@@ -61,6 +61,8 @@ const Notifications = ({ navigation }: any) => {
     },
     onError: (error: any) => {
       console.log(error);
+      refetch();
+      queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
     },
   });
 
@@ -117,15 +119,11 @@ const Notifications = ({ navigation }: any) => {
               onPress={() => {
                 MarkAsRead.mutate({ id: item.id });
                 if (isStaff) {
-                  if (item.type == 1) {
-                    navigation.navigate("Home");
-                  } else {
-                    navigation.navigate("staff-service", {
-                      name: item.ticket.service.title,
-                      id: item.ticket.id,
-                      serviceId: item.ticket.service.id,
-                    });
-                  }
+                  navigation.navigate("staff-service", {
+                    name: item.ticket.service.title,
+                    id: item.ticket.id,
+                    serviceId: item.ticket.service.id,
+                  });
                 } else {
                   navigation.navigate("User-Service", {
                     name: item.ticket.service.title,

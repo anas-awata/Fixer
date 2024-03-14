@@ -36,12 +36,16 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           longitude: location.coords.longitude,
         });
       } catch (error) {
-        console.error("Error fetching user location:", error);
         // If fetching user location fails, set the location to the city center of Damascus, Syria
         setSelectedLocation({
           latitude: 33.5138,
           longitude: 36.2765,
         });
+        onLocationSelect({
+          latitude: 33.5138,
+          longitude: 36.2765,
+        });
+        console.error("Error fetching user location:", error);
       }
     };
 
