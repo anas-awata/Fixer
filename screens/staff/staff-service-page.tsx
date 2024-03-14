@@ -89,7 +89,6 @@ const StaffServicePage = ({ route, navigation }: Props) => {
       id: data?.id!,
       workers: submittedData.workers?.join(","),
     };
-    console.log("ticket", ticketData);
 
     if (data?.status == "Open") {
       //@ts-ignore

@@ -3,14 +3,10 @@ import RootNavigator from "./navigators/root-navigator";
 import {
   PaperProvider,
   MD3LightTheme as DefaultTheme,
-  TextInput,
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { usePushNotifications } from "./hooks/usePushNotifications";
-import NotificationHandler from "./hooks/notification-handler";
-import { Text } from "react-native";
-import { firebase } from "@react-native-firebase/messaging";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
@@ -24,7 +20,7 @@ export default function App() {
     },
   };
   const { expoPushToken } = usePushNotifications();
-  console.log("expotoke", expoPushToken?.data);
+  // console.log("expotoke", expoPushToken?.data);
 
   AsyncStorage.setItem("deviceToken", JSON.stringify(expoPushToken?.data));
   //eas build --profile production --platform android

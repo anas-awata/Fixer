@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, BottomNavigation } from "react-native-paper";
+import { Text, BottomNavigation, Badge } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { CommonActions } from "@react-navigation/native";
 import Settings from "../screens/settings";
@@ -33,7 +33,6 @@ export default function BottomNavigator() {
   AsyncStorage.getItem("user")
     .then((user) => {
       const parsedUser = JSON.parse(user!);
-      console.log(parsedUser);
       setIsStaff(parsedUser?.is_staff || false);
       setIsSupervisor(parsedUser?.is_supervisor || false);
     })
@@ -42,7 +41,7 @@ export default function BottomNavigator() {
     });
 
   const {
-    data: notificationsCount,
+    data,
     isLoading,
     isError,
     refetch,
@@ -51,6 +50,12 @@ export default function BottomNavigator() {
     queryKey: ["notificationsCount"],
     queryFn: fetchNotificationsNumber,
   });
+
+  const [notificationsCount, setNotificationsCount] = useState(0);
+  useEffect(() => {
+    setNotificationsCount(data?.unseen_count!);
+  }, [data]);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -127,9 +132,17 @@ export default function BottomNavigator() {
         component={Notifications}
         options={{
           tabBarLabel: "Notifications",
-          tabBarBadge: notificationsCount?.unseen_count || 0,
           tabBarIcon: ({ color, size }: any) => {
-            return <Icon name="bell" size={size} color={"blue"} />;
+            return (
+              <View style={{ position: "relative" }}>
+                <Icon name="bell" size={size} color={"blue"} />
+                {notificationsCount > 0 && (
+                  <Badge style={{ position: "absolute", top: -5, left: 20 }}>
+                    {notificationsCount}
+                  </Badge>
+                )}
+              </View>
+            );
           },
         }}
       />

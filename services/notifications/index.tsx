@@ -1,15 +1,13 @@
 import { fetchApi } from "../../api/api";
 import { notificationResponse } from "../../models/notifications";
 
-export const fetchNotifications = async (): Promise<notificationResponse[]> => {
-  const response = await fetchApi("/notif/list/", "GET");
-  return response.data.results as notificationResponse[];
-};
-
-export const fetchUnseenNotifications = async (): Promise<
-  notificationResponse[]
-> => {
-  const response = await fetchApi("/notif/unseen/", "GET");
+export const fetchNotifications = async (
+  filtered: boolean
+): Promise<notificationResponse[]> => {
+  const response = await fetchApi(
+    filtered ? "/notif/list?filtered=true" : "/notif/list/",
+    "GET"
+  );
   return response.data.results as notificationResponse[];
 };
 

@@ -64,7 +64,6 @@ const VerifyAccount = ({ navigation, route }: Props) => {
   });
 
   const onSubmit = async (data: Activate) => {
-    console.log("mydata", { ...data, email: email });
     try {
       await mutate({ ...data, email: email });
     } catch (error: any) {
