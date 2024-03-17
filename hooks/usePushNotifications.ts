@@ -12,11 +12,13 @@ import {
   Subscription,
   getDevicePushTokenAsync,
   DevicePushToken,
+  scheduleNotificationAsync,
 } from "expo-notifications";
 import Constants from "expo-constants";
-import { Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface PushNotificationState {
   expoPushToken?: DevicePushToken;
@@ -29,9 +31,9 @@ export const usePushNotifications = (): PushNotificationState => {
   >();
 
   const [notification, setNotification] = useState<Notification | undefined>();
-
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
+  const queryClient = useQueryClient();
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -75,13 +77,16 @@ export const usePushNotifications = (): PushNotificationState => {
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
         setNotification(notification);
-        console.log("mynotification", notification);
+        queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
       }
     );
 
     responseListener.current = addNotificationResponseReceivedListener(
       (response) => {
         console.log("my action", response);
+        queryClient.invalidateQueries({ queryKey: ["notificationsCount"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
       }
     );
 

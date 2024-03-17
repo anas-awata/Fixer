@@ -5,6 +5,7 @@ import { View, StyleSheet, Modal, Text } from "react-native";
 import { ActivityIndicator, Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { StaffMarkAsPaid } from "../../services/service";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
 interface Props {
   visible: boolean;
@@ -83,7 +84,7 @@ const QrCodeScannerModal = ({ visible, onClose, id, navigation }: Props) => {
               onBarCodeScanned={handleBarCodeScanned}
               style={StyleSheet.absoluteFillObject}
               barCodeScannerSettings={{
-                barCodeTypes: ["qr", "pdf417"],
+                barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
               }}
             />
           ) : (

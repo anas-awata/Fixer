@@ -4,10 +4,13 @@
     "slug": "fixer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/adaptive-icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "backgroundColor": "#000"
+    },
+    "notification": {
+      "icon": "./assets/logo.png"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -19,15 +22,23 @@
         "googleMaps": { "apiKey": "GOOGLE_MAPS_API_KEY" }
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#004a8d"
       },
       "package": "com.Fixer.app",
       "googleServicesFile": "./google-services.json"
     },
-    "plugins": ["@react-native-firebase/app"],
+    "plugins": [
+      "@react-native-firebase/app",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo.png"
+        }
+      ]
+    ],
     "web": {
-      "favicon": "./assets/adaptive-icon.png"
+      "favicon": "./assets/logo.png"
     },
     "extra": {
       "eas": {

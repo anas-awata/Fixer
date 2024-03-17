@@ -6,10 +6,15 @@ import {
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
-import { usePushNotifications } from "./hooks/usePushNotifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
 import { setNotificationHandler } from "expo-notifications";
+
+setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldShowAlert: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -21,22 +26,6 @@ export default function App() {
       secondary: "yellow",
     },
   };
-  const { expoPushToken, notification } = usePushNotifications();
-  // console.log("expotoke", expoPushToken?.data);
-
-  AsyncStorage.setItem("deviceToken", JSON.stringify(expoPushToken?.data));
-  //eas build --profile production --platform android
-
-  useEffect(() => {
-    console.log("notification", notification);
-    setNotificationHandler({
-      handleNotification: async () => ({
-        shouldPlaySound: true,
-        shouldShowAlert: true,
-        shouldSetBadge: true,
-      }),
-    });
-  }, [notification]);
 
   return (
     <>

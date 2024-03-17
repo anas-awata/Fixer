@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   DimensionValue,
   View,
+  Pressable,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -24,9 +25,8 @@ const HomeServiceCard = ({ service, navigation, width }: Props) => {
     });
   };
 
-
   return (
-    <TouchableOpacity
+    <Pressable
       key={service.id}
       onPress={() => handleServicePress(service)}
       style={{ ...styles.featuredServiceCard, width: width ? width : 200 }}
@@ -55,7 +55,7 @@ const HomeServiceCard = ({ service, navigation, width }: Props) => {
           ))}
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 5,
-    gap:5
+    gap: 5,
   },
 });
 

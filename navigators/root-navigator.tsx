@@ -15,10 +15,20 @@ import StaffServiceHistory from "../screens/staff/staff-service-history";
 import EditProfile from "../screens/edit-profile";
 import UserServicePage from "../screens/user-service-page";
 import Services from "../screens/services";
+import { usePushNotifications } from "../hooks/usePushNotifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
+  const { expoPushToken, notification } = usePushNotifications();
+  AsyncStorage.setItem("deviceToken", JSON.stringify(expoPushToken?.data));
+  //eas build --profile production --platform android
+
+  useEffect(() => {
+    console.log("notification", notification);
+  }, [notification]);
   return (
     <Stack.Navigator initialRouteName="welcome">
       <Stack.Screen
