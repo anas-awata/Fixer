@@ -39,8 +39,8 @@ export default function BottomNavigator() {
   AsyncStorage.getItem("user")
     .then((user) => {
       const parsedUser = JSON.parse(user!);
-      setIsStaff(parsedUser?.is_staff || null);
-      setIsSupervisor(parsedUser?.is_supervisor || null);
+      setIsStaff(parsedUser?.is_staff || false);
+      setIsSupervisor(parsedUser?.is_supervisor || false);
     })
     .catch((error) => {
       console.error("Error retrieving user:", error);
