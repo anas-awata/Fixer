@@ -17,6 +17,7 @@ import StaffMyTickets from "../screens/staff/staff-my-tickets";
 import Notifications from "../screens/notifications";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { fetchNotificationsNumber } from "../services/notifications";
+import CustomLoading from "../components/custom-loading";
 
 type TabParamList = {
   Home: undefined;
@@ -32,14 +33,14 @@ interface NotificationsCountResponse {
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function BottomNavigator() {
-  const [isStaff, setIsStaff] = useState(false);
-  const [isSupervisor, setIsSupervisor] = useState(false);
+  const [isStaff, setIsStaff] = useState(null);
+  const [isSupervisor, setIsSupervisor] = useState(null);
 
   AsyncStorage.getItem("user")
     .then((user) => {
       const parsedUser = JSON.parse(user!);
-      setIsStaff(parsedUser?.is_staff || false);
-      setIsSupervisor(parsedUser?.is_supervisor || false);
+      setIsStaff(parsedUser?.is_staff || null);
+      setIsSupervisor(parsedUser?.is_supervisor || null);
     })
     .catch((error) => {
       console.error("Error retrieving user:", error);
@@ -60,6 +61,10 @@ export default function BottomNavigator() {
   useEffect(() => {
     setNotificationsCount(data?.unseen_count!);
   }, [data]);
+
+  if (isStaff === null) {
+    return <CustomLoading />;
+  }
 
   return (
     <Tab.Navigator

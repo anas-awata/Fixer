@@ -1,6 +1,14 @@
 import React from "react";
-import { TouchableOpacity, Text, View, Image, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  ImageBackground,
+} from "react-native";
 import { serviceResponse } from "../models/service";
+import Icon from "react-native-vector-icons/Ionicons";
 
 type Props = {
   service: serviceResponse;
@@ -19,10 +27,27 @@ const ServiceCard = ({ service, navigation }: Props) => {
       }}
       style={styles.featuredServiceCard}
     >
-      <Image
+      <ImageBackground
         source={{ uri: service.picture }}
         style={styles.featuredServiceImage}
-      />
+      >
+        {service.average_rating && (
+          <View style={styles.headerContent}>
+            <View style={styles.starContainer}>
+              {[1, 2, 3, 4, 5].map((index) => (
+                <Icon
+                  name={
+                    service.average_rating! >= index ? "star" : "star-outline"
+                  }
+                  size={12}
+                  color={service.average_rating! >= index ? "#FFD700" : "#ccc"}
+                  key={index}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+      </ImageBackground>
       <Text style={styles.featuredServiceTitle}>{service.title}</Text>
     </TouchableOpacity>
   );
@@ -62,7 +87,29 @@ const styles = StyleSheet.create({
   },
   featuredServiceDescription: {
     fontSize: 14,
-    color: "#555",
+    color: "#fff",
+  },
+  header: {
+    height: 200, // Adjust the height as needed
+    justifyContent: "flex-end",
+    padding: 20,
+  },
+  headerContent: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background for text
+    padding: 5,
+    borderRadius: 10,
+    display: "flex",
+    gap: 10,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+  },
+  starContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+    gap: 5,
   },
 });
 

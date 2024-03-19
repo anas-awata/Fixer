@@ -7,6 +7,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { setNotificationHandler } from "expo-notifications";
+import { navigationRef } from "./api/api";
 
 setNotificationHandler({
   handleNotification: async () => ({
@@ -29,7 +30,7 @@ export default function App() {
 
   return (
     <>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <QueryClientProvider client={queryClient}>
           <PaperProvider theme={theme}>
             {/* <TextInput value={expoPushToken?.data} /> */}

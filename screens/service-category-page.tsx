@@ -1,15 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import { fetchServiceCategory } from "../services/service-categories/indexx";
 import ServiceCard from "../components/service-card";
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import CustomLoading from "../components/custom-loading";
 
 interface Props {
   route: any;
@@ -19,16 +13,27 @@ interface Props {
 const ServiceCategoryPage: React.FC<Props> = ({ route, navigation }) => {
   const { id } = route.params;
   console.log("route", route, id);
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["get-service-category", id],
     queryFn: () => fetchServiceCategory(id),
   });
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, []);
   if (isLoading) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
   return (
     <View>
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         data={data}
         style={{ paddingVertical: 10 }}
         renderItem={({ item }) => (
@@ -41,18 +46,11 @@ const ServiceCategoryPage: React.FC<Props> = ({ route, navigation }) => {
           paddingHorizontal: 10,
           paddingVertical: 10,
           gap: 10,
+          alignItems: "flex-start",
         }}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default ServiceCategoryPage;

@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import {
   StyleSheet,
-  ActivityIndicator,
   FlatList,
   View,
   ScrollView,
@@ -12,6 +11,7 @@ import {
 import { fetchUserServices } from "../services/service";
 import UserServiceCard from "../components/user-service-card";
 import { Button } from "react-native-paper";
+import CustomLoading from "../components/custom-loading";
 
 interface Props {
   route: any;
@@ -25,7 +25,7 @@ const UserHistoryPage: React.FC<Props> = ({ route, navigation }) => {
     queryFn: () => fetchUserServices(false),
   });
   if (isLoading) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
   return (
     <View style={{ flex: 1 }}>
@@ -63,11 +63,6 @@ const UserHistoryPage: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",

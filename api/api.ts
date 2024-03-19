@@ -1,10 +1,9 @@
 import axios, { AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  NavigationProp,
-  ParamListBase,
-  useNavigation,
-} from "@react-navigation/native";
+import { BackHandler } from "react-native";
+import { createNavigationContainerRef } from "@react-navigation/native";
+
+export const navigationRef = createNavigationContainerRef();
 
 export const fetchApi = async (
   url: string,
@@ -53,9 +52,14 @@ const handleApiError = async (error: AxiosError, token: string | null) => {
     if (status === 401) {
       console.log("UnAuthenticated Error");
       if (token) {
-        // console.log("clear");
-        // await AsyncStorage.clear();
-        // navigation.navigate("log-in");
+        AsyncStorage.removeItem("token");
+        AsyncStorage.removeItem("user");
+        if (navigationRef.isReady()) {
+          navigationRef.reset({
+            index: 0,
+            routes: [{ name: "log-in" }],
+          });
+        }
       }
     } else if (status === 403) {
       console.log("UnauthorizedError");

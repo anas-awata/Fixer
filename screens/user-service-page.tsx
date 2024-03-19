@@ -4,7 +4,6 @@ import {
   Text,
   ImageBackground,
   StyleSheet,
-  ActivityIndicator,
   TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
@@ -19,6 +18,7 @@ import StarRatingModal from "../components/inputs/star-rating-modal";
 import useReverseGeocoding from "../hooks/use-reverce-geocoding";
 import QrCodeGeneratorModal from "../components/qr-code-generator-modal";
 import useUserTicketMutations from "../hooks/use-user-ticket-mutations";
+import CustomLoading from "../components/custom-loading";
 
 type Props = {
   route: any;
@@ -73,7 +73,7 @@ const UserServicePage = ({ route, navigation }: Props) => {
   };
 
   if (status === "pending" || isLoading || isFetching) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
 
   if (status === "error") {
@@ -158,6 +158,16 @@ const UserServicePage = ({ route, navigation }: Props) => {
                     <Paragraph style={{ fontSize: 14, color: "blue" }}>
                       Final Price : ${data.final_price}
                     </Paragraph>
+                  )}
+                  {data.notes && (
+                    <>
+                      <Paragraph style={{ fontSize: 14, color: "blue" }}>
+                        notes : {data.notes}
+                      </Paragraph>
+                      <Paragraph style={{ fontSize: 14, color: "black" }}>
+                        {data.notes}
+                      </Paragraph>
+                    </>
                   )}
                   <Paragraph style={{ fontSize: 14, color: "blue" }}>
                     Order Location
@@ -270,8 +280,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 200, // Adjust the height as needed
-    justifyContent: "flex-end",
+    height: 300, // Adjust the height as needed
+    justifyContent: "center",
     padding: 20,
   },
   headerContent: {
@@ -291,11 +301,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#fff",
     width: "100%",
-  },
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   input: {
     width: "100%",

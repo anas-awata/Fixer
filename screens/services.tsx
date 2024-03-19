@@ -1,54 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import { View, StyleSheet, ActivityIndicator, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { fetchServices } from "../services/service";
 import HomeServiceCard from "../components/home-service-card";
+import ServiceCard from "../components/service-card";
+import CustomLoading from "../components/custom-loading";
 
 interface Props {
   navigation: any;
 }
 
 const Services: React.FC<Props> = ({ navigation }) => {
-  const { data, status, isLoading } = useQuery({
+  const { data, status, isLoading, refetch } = useQuery({
     queryKey: ["get-services"],
     queryFn: () => fetchServices(false),
   });
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, []);
+
   if (isLoading) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
   return (
-    <View style={{ flex: 1, alignItems: "center",marginLeft:"8%" }}>
+    <View style={{ flex: 1, alignItems: "center" }}>
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         style={{ width: "100%", paddingVertical: 10 }}
         data={data}
         renderItem={({ item }) => (
-          <HomeServiceCard
-            service={item}
-            navigation={navigation}
-            width={"90%"}
-            key={item.id}
-          />
+          <ServiceCard service={item} navigation={navigation} key={item.id} />
         )}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={1}
+        numColumns={2}
         ListEmptyComponent={null}
-        contentContainerStyle={{
+        columnWrapperStyle={{
           paddingHorizontal: 10,
           paddingVertical: 10,
           gap: 10,
+          alignItems: "flex-start",
         }}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default Services;

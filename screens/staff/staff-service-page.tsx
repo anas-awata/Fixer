@@ -4,7 +4,6 @@ import {
   Text,
   ImageBackground,
   StyleSheet,
-  ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
@@ -28,6 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import QrCodeScannerModal from "../../components/inputs/qr-code-scanner-modal";
 import useStaffTicketMutations from "../../hooks/use-staff-ticket-mutations";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import CustomLoading from "../../components/custom-loading";
 
 type Props = {
   route: any;
@@ -120,7 +120,7 @@ const StaffServicePage = ({ route, navigation }: Props) => {
     workersIsLoading ||
     isFetching
   ) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
 
   if (status === "error" || workersStatus === "error") {
@@ -212,6 +212,16 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                     <Paragraph style={{ fontSize: 14, color: "blue" }}>
                       Final Price : ${data.final_price}
                     </Paragraph>
+                  )}
+                  {data.notes && (
+                    <>
+                      <Paragraph style={{ fontSize: 14, color: "blue" }}>
+                        notes : {data.notes}
+                      </Paragraph>
+                      <Paragraph style={{ fontSize: 14, color: "black" }}>
+                        {data.notes}
+                      </Paragraph>
+                    </>
                   )}
                   {data.workers.length > 0 && (
                     <>
@@ -359,12 +369,14 @@ const StaffServicePage = ({ route, navigation }: Props) => {
                     )}
                   </>
                 )}
-                <QrCodeScannerModal
-                  visible={modalVisible}
-                  onClose={() => setModalVisible(false)}
-                  id={data.id}
-                  navigation={navigation}
-                />
+                {data.status == "Pending Payment" && (
+                  <QrCodeScannerModal
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    id={data.id}
+                    navigation={navigation}
+                  />
+                )}
               </Card.Content>
             </TouchableWithoutFeedback>
           </Card>
@@ -380,7 +392,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 300, // Adjust the height as needed
-    justifyContent: "flex-end",
+    justifyContent: "center",
     padding: 20,
   },
   headerContent: {
@@ -399,11 +411,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 20,
-  },
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   input: {
     width: "100%",

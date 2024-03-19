@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -16,6 +15,7 @@ import {
 } from "../services/notifications";
 import { notificationResponse } from "../models/notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomLoading from "../components/custom-loading";
 
 const Notifications = ({ navigation }: any) => {
   const [showAll, setshowAll] = useState(false);
@@ -68,7 +68,7 @@ const Notifications = ({ navigation }: any) => {
   });
 
   if (isLoading || isFetching) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
 
   if (isError) {
@@ -156,11 +156,6 @@ const Notifications = ({ navigation }: any) => {
 export default Notifications;
 
 const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   itemContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,

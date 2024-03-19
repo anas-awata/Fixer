@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import { View, StyleSheet, ActivityIndicator, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { fetchServiceCategories } from "../services/service-categories/indexx";
 import ServiceCategoryCard from "../components/service-category-card";
+import CustomLoading from "../components/custom-loading";
 
 interface Props {
   navigation: any;
@@ -14,7 +15,7 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     queryFn: () => fetchServiceCategories(),
   });
   if (isLoading) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
   return (
     <View>
@@ -40,13 +41,5 @@ const Categories: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default Categories;

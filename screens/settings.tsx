@@ -6,7 +6,7 @@ import {
   NavigationProp,
   ParamListBase,
 } from "@react-navigation/native";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
@@ -20,6 +20,7 @@ const Settings = ({ navigation }: Props) => {
   const [visible, setVisible] = React.useState(false);
   const [isStaff, setIsStaff] = useState(false);
   const [isSupervisor, setIsSupervisor] = useState(false);
+  const queryClient = useQueryClient();
 
   AsyncStorage.getItem("user")
     .then((user) => {
@@ -37,9 +38,9 @@ const Settings = ({ navigation }: Props) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: logout,
     onSuccess: (data) => {
-
       AsyncStorage.removeItem("token");
       AsyncStorage.removeItem("user");
+      queryClient.clear();
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

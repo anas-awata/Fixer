@@ -4,7 +4,6 @@ import {
   Text,
   ImageBackground,
   StyleSheet,
-  ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
@@ -12,22 +11,16 @@ import {
   Platform,
 } from "react-native";
 import { Button, Card, Title, Paragraph } from "react-native-paper";
-import { serviceRequest, serviceResponse } from "../models/service";
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { serviceRequest } from "../models/service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AddClientService, fetchServicesById } from "../services/service";
 import TextInputController from "../components/inputs/text-input-controller";
 import { useForm } from "react-hook-form";
 import LocationPickerModal from "../components/inputs/location-picker-modal";
 import useReverseGeocoding from "../hooks/use-reverce-geocoding";
-import SelectController from "../components/inputs/select-controller";
 import SelectInputController from "../components/inputs/select-controller";
 import Toast from "react-native-toast-message";
-import PictureInputController from "../components/inputs/picture-input-controller";
+import CustomLoading from "../components/custom-loading";
 
 type Props = {
   route: any;
@@ -61,7 +54,6 @@ const ServicePage = ({ route, navigation }: Props) => {
       is_staff: boolean;
       username: string;
     }) => {
-
       reset();
       navigation.navigate("home");
       queryClient.invalidateQueries({
@@ -129,7 +121,7 @@ const ServicePage = ({ route, navigation }: Props) => {
   };
 
   if (status === "pending") {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
 
   if (status === "error") {
@@ -145,42 +137,42 @@ const ServicePage = ({ route, navigation }: Props) => {
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <ImageBackground source={{ uri: picture }} style={styles.header}>
-          <View style={styles.headerContent}>
-            <Title style={styles.title}>{title}</Title>
-            <Paragraph style={{ fontSize: 14, color: "#fff" }}>
-              {description}
-            </Paragraph>
-            <View>
-              <Paragraph
-                style={{ fontSize: 16, fontWeight: "600", color: "#fff" }}
-              >
-                Price: ${initial_price}
-              </Paragraph>
-              {!is_final_price && (
-                <Paragraph
-                  style={{ fontSize: 11, fontWeight: "600", color: "orange" }}
-                >
-                  Price may change depending on your request info
-                </Paragraph>
-              )}
-            </View>
-          </View>
-        </ImageBackground>
-      </TouchableWithoutFeedback>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }} // Ensure the KeyboardAvoidingView fills the entire screen
-        behavior={Platform.OS === "ios" ? "padding" : undefined} // Adjust behavior based on platform
+      <ScrollView
+        style={{ height: "100%" }} // Set the height to fill the parent container
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        nestedScrollEnabled={true}
       >
-        <Card style={styles.card}>
-          <ScrollView
-            style={{ height: "100%" }} // Set the height to fill the parent container
-            contentContainerStyle={{
-              paddingVertical: 20,
-              paddingHorizontal: 10,
-            }}
-          >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ImageBackground source={{ uri: picture }} style={styles.header}>
+            <View style={styles.headerContent}>
+              <Title style={styles.title}>{title}</Title>
+              <Paragraph style={{ fontSize: 14, color: "#fff" }}>
+                {description}
+              </Paragraph>
+              <View>
+                <Paragraph
+                  style={{ fontSize: 16, fontWeight: "600", color: "#fff" }}
+                >
+                  Price: ${initial_price}
+                </Paragraph>
+                {!is_final_price && (
+                  <Paragraph
+                    style={{ fontSize: 11, fontWeight: "600", color: "orange" }}
+                  >
+                    Price may change depending on your request info
+                  </Paragraph>
+                )}
+              </View>
+            </View>
+          </ImageBackground>
+        </TouchableWithoutFeedback>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }} // Ensure the KeyboardAvoidingView fills the entire screen
+          behavior={Platform.OS === "ios" ? "padding" : undefined} // Adjust behavior based on platform
+        >
+          <Card style={styles.card}>
             <TouchableWithoutFeedback onPress={dismissKeyboard}>
               <Card.Content style={{ display: "flex", gap: 10 }}>
                 <Paragraph style={{ fontSize: 16, color: "blue" }}>
@@ -259,9 +251,9 @@ const ServicePage = ({ route, navigation }: Props) => {
                 </Button>
               </Card.Content>
             </TouchableWithoutFeedback>
-          </ScrollView>
-        </Card>
-      </KeyboardAvoidingView>
+          </Card>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </View>
   );
 };
@@ -271,8 +263,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 300, // Adjust the height as needed
-    justifyContent: "flex-end",
+    height: 330, // Adjust the height as needed
+    justifyContent: "center",
     padding: 20,
   },
   headerContent: {
@@ -288,14 +280,10 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   card: {
-    margin: 10,
     flex: 1,
+    padding: 10,
     backgroundColor: "#fff",
-  },
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
   },
   input: {
     width: "100%",
@@ -305,60 +293,3 @@ const styles = StyleSheet.create({
 });
 
 export default ServicePage;
-
-// const onSubmit = async (submittedData: serviceRequest) => {
-//   try {
-//     const { pictures, location, ...rest } = submittedData;
-
-//     // Create FormData object
-//     const formData = new FormData();
-//     formData.append("service", id);
-
-//     // Append location data to FormData if it exists
-//     if (selectedLocation !== null) {
-//       formData.append("location", JSON.stringify(selectedLocation));
-//     }
-
-//     // Append non-file data to FormData
-//     Object.entries(rest).forEach(([key, value]) => {
-//       if (
-//         key === "info_fields" &&
-//         typeof value === "object" &&
-//         value !== null
-//       ) {
-//         // Append other info_fields data if present
-//         Object.entries(value).forEach(([fieldKey, fieldValue]) => {
-//           formData.append(`info_fields.${fieldKey}`, fieldValue.toString());
-//         });
-//       } else {
-//         formData.append(key, value.toString());
-//       }
-//     });
-//     // Convert image URIs to Blob objects and append to FormData
-//     await Promise.all(
-//       pictures.map(async (picture, index) => {
-//         const response = await fetch(picture.uri);
-//         console.log("pic", response);
-//         const blob = await response.blob();
-//         formData.append(`picture[${index}]`, blob, `picture_${index}.jpg`);
-//       })
-//     );
-
-//     // Send FormData to backend using React Query mutation
-//     // console.log(formData);
-//     AddService(formData);
-//   } catch (error) {
-//     console.error("Error submitting service request:", error);
-//   }
-// };
-
-// const onSubmit = (submittedData: serviceRequest) => {
-//   console.log("pictures", submittedData.pictures);
-//   const ticketData = {
-//     ...submittedData,
-//     location: selectedLocation,
-//     service: data?.id!,
-//   };
-//   console.log("ticket", ticketData);
-//   AddService(ticketData);
-// };

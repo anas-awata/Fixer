@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Alert, Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import {
+  CommonActions,
+  NavigationProp,
+  ParamListBase,
+} from "@react-navigation/native";
 import { Button, TextInput } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { logIn } from "../models/auth";
@@ -21,6 +25,8 @@ const LogIn = ({ navigation }: Props) => {
   const { control, handleSubmit, formState, setError, reset, getValues } =
     useForm<logIn>();
   const { errors } = formState;
+
+  const [FormError, setFormError] = useState("");
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -47,7 +53,12 @@ const LogIn = ({ navigation }: Props) => {
       AsyncStorage.setItem("token", data?.token);
       AsyncStorage.setItem("user", JSON.stringify({ ...data }));
       reset();
-      navigation.navigate("home");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "home" }],
+        })
+      );
     },
     onError: (error: any) => {
       if (error.response.status == 403) {
@@ -59,24 +70,12 @@ const LogIn = ({ navigation }: Props) => {
         });
       }
       if (error.response && error.response.status === 400) {
-        setError("email", {
-          type: "manual",
-          message: error?.response?.data.error,
-        });
+        setFormError(error?.response?.data.error);
       }
     },
   });
 
   const onSubmit = async (data: logIn) => {
-    // if (!deviceToken) {
-    //   console.error("Device token is null");
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Error logging in ,Please Try agin later",
-    //   });
-    //   return;
-    // }
-
     try {
       await mutate({ ...data, device_reg_id: deviceToken });
     } catch (error: any) {
@@ -105,6 +104,9 @@ const LogIn = ({ navigation }: Props) => {
           style={styles.input}
           keyboardType="email-address"
           textContentType="emailAddress"
+          onChange={() => {
+            setFormError("");
+          }}
         />
 
         <TextInputController
@@ -119,10 +121,16 @@ const LogIn = ({ navigation }: Props) => {
           style={styles.input}
           textContentType="password"
           secureTextEntry={true}
+          onChange={() => {
+            setFormError("");
+          }}
         />
+        {FormError && (
+          <Text style={{ color: "red", marginTop: 10 }}>{FormError}</Text>
+        )}
         <Pressable
           onPress={handleSubmit(onSubmit)}
-          disabled={formState.isSubmitting || !!errors.email}
+          disabled={formState.isSubmitting || FormError != ""}
           style={[styles.buttonWrapper]}
         >
           <View style={{ width: "100%" }}>
@@ -137,7 +145,7 @@ const LogIn = ({ navigation }: Props) => {
           </View>
         </Pressable>
         <View style={styles.rowFlex}>
-          <Text>don't have an acount ?</Text>
+          <Text>don't have an account ?</Text>
           <Button mode="text" onPress={() => navigation.navigate("register")}>
             SignUp
           </Button>

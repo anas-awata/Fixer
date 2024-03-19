@@ -1,12 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import {
-  StyleSheet,
-  ActivityIndicator,
-  FlatList,
-  View,
-  RefreshControl,
-} from "react-native";
+import { StyleSheet, FlatList, View, RefreshControl } from "react-native";
 import {
   fetchStaffAvailableServices,
   fetchUserServices,
@@ -14,6 +8,7 @@ import {
 import UserServiceCard from "../components/user-service-card";
 import { Text, Title } from "react-native-paper";
 import StaffServiceCard from "./staff/staff-service-card";
+import CustomLoading from "./custom-loading";
 
 interface Props {
   navigation: any;
@@ -34,10 +29,8 @@ const StaffAvailableServicesList: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" style={styles.activityIndicator} />;
+    return <CustomLoading />;
   }
-
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -64,13 +57,5 @@ const StaffAvailableServicesList: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default StaffAvailableServicesList;
