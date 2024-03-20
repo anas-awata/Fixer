@@ -8,6 +8,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { setNotificationHandler } from "expo-notifications";
 import { navigationRef } from "./api/api";
+import { View } from "react-native";
+import { I18nManager} from 'react-native';
+
+I18nManager.allowRTL(false);
 
 setNotificationHandler({
   handleNotification: async () => ({
