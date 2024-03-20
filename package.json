@@ -34,6 +34,7 @@
     "expo-notifications": "~0.20.1",
     "expo-sqlite": "~11.3.3",
     "expo-status-bar": "~1.6.0",
+    "expo-updates": "^0.24.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.2",

@@ -1,7 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import * as React from "react";
-import { Text, View, StyleSheet, Image, StatusBar } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  StatusBar,
+  Platform,
+  I18nManager,
+} from "react-native";
+import * as Updates from "expo-updates";
 
 interface Props {
   navigation: any;
@@ -11,9 +20,22 @@ const WelcomeScreen = ({ navigation }: Props) => {
   React.useEffect(() => {
     const checkTokenAndNavigate = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
+        const temp = await AsyncStorage.getItem("isRTL");
+        const AsyncIsRTLAndroid = JSON.parse(temp || "false");
 
-        // Navigate to the appropriate screen based on the token
+        const isRTLAndroid =
+          Platform.OS == "android" &&
+          I18nManager.isRTL &&
+          AsyncIsRTLAndroid != true;
+
+        if (isRTLAndroid) {
+          await AsyncStorage.setItem("isRTL", "true");
+          I18nManager.forceRTL(false);
+          I18nManager.allowRTL(false);
+          await Updates.reloadAsync();
+        }
+
+        const token = await AsyncStorage.getItem("token");
         navigation.replace(token ? "home" : "log-in");
       } catch (error) {
         console.error("Error checking token:", error);

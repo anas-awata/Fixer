@@ -69,7 +69,10 @@ const UserServicePage = ({ route, navigation }: Props) => {
   const [qrModalVisible, setQrModalVisible] = useState(false);
 
   const handleRate = (selectedRating: any) => {
-    rateService({ id: id, client_rating: selectedRating });
+    rateService(
+      { id: id, client_rating: selectedRating },
+      { onSuccess: () => setModalVisible(false) }
+    );
   };
 
   if (status === "pending" || isLoading || isFetching) {
@@ -242,6 +245,7 @@ const UserServicePage = ({ route, navigation }: Props) => {
                       visible={modalVisible}
                       onClose={() => setModalVisible(false)}
                       onRate={handleRate}
+                      isLoading={isRateServicePending}
                     />
                   </>
                 )}

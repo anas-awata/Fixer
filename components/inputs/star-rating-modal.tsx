@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Button,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Modal, TouchableOpacity } from "react-native";
+import { Button, Text } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   onRate: Function;
+  isLoading: boolean;
 }
 
-const StarRatingModal = ({ visible, onClose, onRate }: Props) => {
+const StarRatingModal = ({ visible, onClose, onRate, isLoading }: Props) => {
   const [rating, setRating] = useState(0);
 
   const handleRate = (selectedRating: any) => {
@@ -45,13 +41,22 @@ const StarRatingModal = ({ visible, onClose, onRate }: Props) => {
               </TouchableOpacity>
             ))}
           </View>
-          <Button
-            title="SUbmit Rating"
-            onPress={() => {
-              onRate(rating);
-              onClose();
-            }}
-          />
+          <View style={{ gap: 10 }}>
+            <Button
+              loading={isLoading}
+              disabled={isLoading}
+              buttonColor="green"
+              mode="contained"
+              onPress={() => {
+                onRate(rating);
+              }}
+            >
+              <Text style={{ color: "white" }}>Submit Your Rating</Text>
+            </Button>
+            <Button mode="text" onPress={onClose}>
+              <Text>Cancel</Text>
+            </Button>
+          </View>
         </View>
       </View>
     </Modal>

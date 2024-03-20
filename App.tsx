@@ -9,19 +9,18 @@ import Toast from "react-native-toast-message";
 import { setNotificationHandler } from "expo-notifications";
 import { navigationRef } from "./api/api";
 import { View } from "react-native";
-import { I18nManager} from 'react-native';
-
-I18nManager.allowRTL(false);
-
-setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: false,
-    shouldShowAlert: true,
-    shouldSetBadge: false,
-  }),
-});
+import { I18nManager } from "react-native";
+import { useEffect } from "react";
 
 export default function App() {
+  setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: false,
+      shouldShowAlert: true,
+      shouldSetBadge: false,
+    }),
+  });
+
   const queryClient = new QueryClient();
   const theme = {
     ...DefaultTheme,

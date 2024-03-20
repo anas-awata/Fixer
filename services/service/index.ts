@@ -61,7 +61,8 @@ export const ClientRateService = async (data: {
 }): Promise<any> => {
   const response = await fetchApi(
     `/ticket/action/client_rate/${data.id}`,
-    "PATCH"
+    "PATCH",
+    data
   );
   return response.data;
 };
