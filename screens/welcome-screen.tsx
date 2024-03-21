@@ -10,7 +10,6 @@ import {
   Platform,
   I18nManager,
 } from "react-native";
-import * as Updates from "expo-updates";
 
 interface Props {
   navigation: any;
@@ -20,20 +19,6 @@ const WelcomeScreen = ({ navigation }: Props) => {
   React.useEffect(() => {
     const checkTokenAndNavigate = async () => {
       try {
-        const temp = await AsyncStorage.getItem("isRTL");
-        const AsyncIsRTLAndroid = JSON.parse(temp || "false");
-
-        const isRTLAndroid =
-          Platform.OS == "android" &&
-          I18nManager.isRTL &&
-          AsyncIsRTLAndroid != true;
-
-        if (isRTLAndroid) {
-          await AsyncStorage.setItem("isRTL", "true");
-          I18nManager.forceRTL(false);
-          I18nManager.allowRTL(false);
-          await Updates.reloadAsync();
-        }
 
         const token = await AsyncStorage.getItem("token");
         navigation.replace(token ? "home" : "log-in");

@@ -21,6 +21,11 @@ export default function App() {
     }),
   });
 
+  useEffect(() => {
+    I18nManager.forceRTL(false);
+    I18nManager.allowRTL(false);
+  }, []);
+
   const queryClient = new QueryClient();
   const theme = {
     ...DefaultTheme,
